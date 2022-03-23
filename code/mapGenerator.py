@@ -3,7 +3,7 @@ import json
 from pickletools import read_uint1
 from platform import node
 import random
-from tkinter import N, X, Label
+from tkinter import N, W, X, Label
 from cv2 import add
 import matplotlib.pyplot as plt
 from scipy import rand
@@ -60,7 +60,7 @@ class Edge:
 
     def printEdge(self):
         #str(self.node_1) + " | " + str(self.node_2)+ " | " +
-        out = " ( " + str(self.node_1[0]) + "," + str(self.node_1[1])+ " ) | " 
+        out = " ( " + str(self.node_1[0]) + "," + str(self.node_1[1])+ " ) ---> " 
         out += " ( " + str(self.node_2[0]) + "," + str(self.node_2[1]) + " ) | "
         out += str(self.distance) + " | " 
         out += str(self.speed)+ " | "
@@ -70,7 +70,7 @@ class Edge:
         f.write('\n')
         #return out
     def showEdge(self):
-        out = " ( " + str(self.node_1[0]) + "," + str(self.node_1[1])+ " ) | " 
+        out = " ( " + str(self.node_1[0]) + "," + str(self.node_1[1])+ " ) ---> " 
         out += " ( " + str(self.node_2[0]) + "," + str(self.node_2[1]) + " ) | "
         out += str(self.distance) + " | " 
         out += str(self.speed)+ " | "
@@ -91,49 +91,65 @@ class Node:
         self.west = None
         self.south = None
         self.north = None
+        self.cycletime = None
 
     #average cycle time 30 to 120 seconds
-    def yellowTime(incomingSpeed):
+    def yellowTime(self,incomingSpeed):
         if incomingSpeed < 35: return 3
         elif incomingSpeed < 40: return 3.5
         elif incomingSpeed < 50: return 4
         elif incomingSpeed < 60: return 4.5
         else: return 5
 
-    def setLightTimes(self,east,west,south,north):
+    def setLightTimes(self):
         #0,1 are east west
         #2,3 are south north
         #Assume equal time for opposite directions and 
         # Green side 1 + yellow side 1 = Red side 2
-        if(east):
-            self.Y_T[0] = self.yellowTime(east.speed)
+        if(self.east):
+            self.Y_T[0] = self.yellowTime(self.east.speed)
         else: self.Y_T[0] = 0
-        if(west):
-            self.Y_T[1] = self.yellowTime(west.speed)
+
+        if(self.west):
+            self.Y_T[1] = self.yellowTime(self.west.speed)
         else: self.Y_T[1] = 0
+
+
+        if(self.south):
+            self.Y_T[2] = self.yellowTime(self.south.speed)
+        else: self.Y_T[2] = 0
+
+        if(self.north):
+            self.Y_T[3] = self.yellowTime(self.north.speed)
+        else: self.Y_T[3] = 0
+
         self.Y_T[0] = max(self.Y_T[0], self.Y_T[1])
         self.Y_T[1] = max(self.Y_T[0], self.Y_T[1])
-
-        self.Y_T[2] = self.yellowTime(south.speed)
-        self.Y_T[3] = self.yellowTime(north.speed)
-
         self.Y_T[2] = max(self.Y_T[2], self.Y_T[3])
         self.Y_T[3] = max(self.Y_T[2], self.Y_T[3])
 
-
-        cycletime = 60 * gaussian() + 30
+        self.cycletime = 60 * gaussian() + 30
 
         e_w_y = max(self.Y_T[0], self.Y_T[1])
         s_n_y = max(self.Y_T[2], self.Y_T[3])
-        e_w_d = east.distance + west.distance
-        s_n_d = north.distance + south.distance
+
+        e_d = 0
+        w_d = 0
+        s_d = 0
+        n_d = 0
+        if self.east: e_d = self.east.distance
+        if self.west: w_d = self.west.distance
+        if self.south: s_d = self.south.distance
+        if self.north: n_d = self.north.distance
+        e_w_d = max(e_d, w_d)
+        s_n_d = max(n_d, s_d)
         e_w_percent_green  = e_w_d / (e_w_d + s_n_d)
 
-        timeleft = cycletime - e_w_y - s_n_y
+        timeleft = self.cycletime - e_w_y - s_n_y
         self.G_T[0] = timeleft * e_w_percent_green
-        self.R_T[0] = cycletime - self.G_T[0] - self.Y_T[0] 
+        self.R_T[0] = self.cycletime - self.G_T[0] - self.Y_T[0] 
         self.R_T[2] = self.G_T[0] + self.Y_T[0]
-        self.G_T[2] = cycletime - self.R_T[2] - self.Y_T[2] 
+        self.G_T[2] = self.cycletime - self.R_T[2] - self.Y_T[2] 
 
         self.G_T[1] = self.G_T[0]
         self.R_T[3] = self.R_T[2]
@@ -294,7 +310,9 @@ def createFile(x,y,nodes):
     for e in y:
         e.printEdge()
 
-
+def setLights(nodes):
+    for node in nodes:
+        node.setLightTimes()
 
 
 
@@ -303,8 +321,9 @@ def run():
     nodes = makeNodes(w_grid,h_grid)
     x_e, y_e, nodes = makeEdges(nodes)
     makeMap(x_e,y_e,nodes)
+    # setLights(nodes)
     createFile(x_e,y_e,nodes=nodes)
-    map =  Map(x_e,y_e,nodes)
+    
     # mp = SavingMap()
     # mp.saveData(x_e,y_e,nodes)
     # i = x_e[0]
