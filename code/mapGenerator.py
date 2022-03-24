@@ -13,7 +13,7 @@ from SavingMap import SavingMap
 from MapObjects import *
 
     
-f = open("output.txt",'w')
+
 
 w_grid = 5
 h_grid = 5
@@ -117,7 +117,7 @@ def makeMap(x_edges, y_edges, nodes ):
     plt.savefig('map.png')
     
 def createFile(x,y,nodes):
-
+    f = open("output.txt",'w')
     print("doing this shit")
     #plt.plot(x_values, y_values)
     f.write("____________________NODES:______________________")
@@ -159,8 +159,11 @@ def seeData():
     SM = SavingMap()
     x,y,n = SM.open()
     # createFile(x,y,n)
-    print(x,y,n)
+    # print(x,y,n)
     return x,y,n
 
-run()
-#seeData()
+# run()
+# x,y,n = seeData()
+
+# for node in n :
+#     print(node.printSelf())
