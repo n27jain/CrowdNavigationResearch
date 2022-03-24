@@ -7,12 +7,11 @@ from tkinter import N, W, X, Label
 from cv2 import add
 import matplotlib.pyplot as plt
 from scipy import rand
-import pickle
 from SavingMap import SavingMap
 #Grid  20 x 20 units That means potential for 400 nodes
 
 
-f = open("Output.txt",'w')
+f = open("output.txt",'w')
 
 w_grid = 5
 h_grid = 5
@@ -56,7 +55,7 @@ class Edge:
         #lets say that there is a 50% chance of any traffic being on any given road
         # and of the 50% the 
         #TODO: Figure out exactly how to distribute the traffic 
-        self.traffic = gaussian()
+        self.traffic = gaussian() * random.randint(0,1) 
 
     def printEdge(self):
         #str(self.node_1) + " | " + str(self.node_2)+ " | " +
@@ -159,7 +158,7 @@ class Node:
 
     def printSelf(self):
         
-        out = "( " + str(self.x) + " " + str(self.y) + " )  " + str(self.R_T) + " " + str(self.Y_T) +" " + str(self.G_T) + " " +str(self.Go_T) +" " + str(self.Stop_T)
+        out = "( " + str(self.x) + " " + str(self.y) + " )  " + str(self.R_T) + " " + str(self.Y_T) +" " + str(self.G_T) + " " +str(self.Go_T) +" " + str(self.Stop_T)+" " + str(self.cycletime)
         if self.north:
             # out += "\n north  : "
             e = self.north.showEdge()
@@ -247,8 +246,8 @@ def makeEdges(nodes):
                 d =  node.x - l_node.x
                 edge = edge = Edge((l_node.x,l_node.y), (node.x,node.y), d, 1 )
                 y_e.append(edge)
-                l_node.west = edge
-                node.east = edge
+                l_node.east = edge
+                node.west = edge
                 lastNodes.append(l_node) 
                 lastNodes.append(node) 
             else:
@@ -273,7 +272,7 @@ def makeMap(x_edges, y_edges, nodes ):
         x_val = [p1[0],p2[0]]
         y_val = [p1[1],p2[1]]
         label = " S: " + str(edge.speed) + " " + "D: " + str(edge.distance)
-        
+        plt.plot(x_val, y_val, label= label)
         
     for edge in y_edges:
         p1 = edge.node_1
@@ -295,7 +294,7 @@ def createFile(x,y,nodes):
     #plt.plot(x_values, y_values)
     f.write("____________________NODES:______________________")
 
-    f.write("\n Pos |R_T: E,W,S,N   |   Y_T   |     G_T    | Go_T    | Stop_T  |")
+    f.write("\n Pos |R_T: E,W,S,N   |   Y_T   |     G_T    | Go_T    | Stop_T  |Cycle Times")
     f.write('\n')
     for node in nodes:
         node.printSelf()
@@ -321,21 +320,19 @@ def run():
     nodes = makeNodes(w_grid,h_grid)
     x_e, y_e, nodes = makeEdges(nodes)
     makeMap(x_e,y_e,nodes)
-    # setLights(nodes)
+    setLights(nodes)
     createFile(x_e,y_e,nodes=nodes)
+    SM = SavingMap()
+    SM.saveData(x_e,y_e,nodes)
     
-    # mp = SavingMap()
-    # mp.saveData(x_e,y_e,nodes)
     # i = x_e[0]
     # jsonStr = json.dumps(nodes[0].__dict__)
     # print(jsonStr)
 
-# def seeData():
-#     print("Lets try this thing")
-#     mp = SavingMap()
-#     x,y,n = mp.open()
-#     print(x.node_1[0])
-#     print(n)
+def seeData():
+    SM = SavingMap()
+    x,y,n = SM.open()
+    createFile(x,y,n)
 
 run()
 #seeData()
