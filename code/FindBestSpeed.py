@@ -33,10 +33,25 @@ def findNode(coordinate, nodes):
 
 def findEdge(node1, node2, edges):
     for edge in edges:
-        if edge.node1 == node1 and edge.node2 == node2:
+        if edge.node_1 == node1 and edge.node_2 == node2:
             return edge
     return None
 
+def createFile(edges,nodes):
+    f = open("solve.txt",'w')
+    f.write("____________________NODES:______________________")
+    f.write("\n Pos |isGreen|   Go_T E,W,S,N     | Stop_T  |Cycle Times")
+    f.write('\n')
+    for node in nodes:
+        f.write(node.printSelfClear())
+        f.write("\n")
+    f.write("____________________EDGES:______________________")
+    f.write("\nPOINT1 |  POINT2 | D | S  | Direction | traffic_factor")
+    for e in edges:
+        f.write(e.printSelf())
+        f.write("\n")
+
+    
 def test():
     SM = SavingMap()
     x,y,n = SM.open()
@@ -46,17 +61,6 @@ def test():
     Tg = [0,0,0,0]
     Tr = [0,0,0,0]
     Cycle = [0,0,0,0]
-
-    # for node in n:
-    #     print(str(node.x) + "," + str(node.y))
-    #     if node.x == 0 and node.y == 1: # N
-    #         nodes[0] = (node)
-    #     elif node.x == 0 and node.y == 2: # E
-    #         nodes[1] = (node)
-    #     elif node.x == 5 and node.y == 2: # N
-    #         nodes[2] = (node)
-    #     elif node.x == 5 and node.y == 3:
-    #         nodes[3] = (node)
     nodes.append(findNode((0,1), n)) # go North
     nodes.append(findNode((0,2), n)) # go East 
     nodes.append(findNode((5,2), n)) # go North
@@ -66,37 +70,30 @@ def test():
     edges.append(findEdge((0,1),(0,2), e)) # go North
     edges.append(findEdge((0,2),(5,2), e)) # go East 
     edges.append(findEdge((5,2),(5,3), e)) # go North
+    createFile(edges, nodes)
     
+    testNode = nodes[0]
+    dangerousTest(testNode)
+    # g_at_t0.append(node.isGreenAtT_0)
+    # Tg.append(node.Go_T)
+    # Tr.append(node.Stop_T)
+    # Cycle.append(node.cycletime)
 
-    
-    g_at_t0.append(node.isGreenAtT_0)
-    Tg.append(node.Go_T)
-    Tr.append(node.Stop_T)
-    Cycle.append(node.cycletime)
+    # g_at_t0.append(node.isGreenAtT_0)
+    # Tg.append(node.Go_T)
+    # Tr.append(node.Stop_T)
+    # Cycle.append(node.cycletime)
 
-    g_at_t0.append(node.isGreenAtT_0)
-    Tg.append(node.Go_T)
-    Tr.append(node.Stop_T)
-    Cycle.append(node.cycletime)
+    # g_at_t0.append(node.isGreenAtT_0)
+    # Tg.append(node.Go_T)
+    # Tr.append(node.Stop_T)
+    # Cycle.append(node.cycletime)
 
-    g_at_t0.append(node.isGreenAtT_0)
-    Tg.append(node.Go_T)
-    Tr.append(node.Stop_T)
-    Cycle.append(node.cycletime)
+    # g_at_t0.append(node.isGreenAtT_0)
+    # Tg.append(node.Go_T)
+    # Tr.append(node.Stop_T)
+    # Cycle.append(node.cycletime)
 
-    g_at_t0.append(node.isGreenAtT_0)
-    Tg.append(node.Go_T)
-    Tr.append(node.Stop_T)
-    Cycle.append(node.cycletime)
-
-
-
-
-    # print(node1.printSelf())
-    # print(node2.printSelf())
-    # print(node3.printSelf())
-    # print(node4.printSelf())
-    # print(x,y,n)
 
 def path(nodes):
     # I am making a custom path for testing rn. 
@@ -115,6 +112,13 @@ def path(nodes):
     print(node1.printSelf())
     print(node2.printSelf())
     print(node3.printSelf())
+
+
+def dangerousTest(node):
+    node.setLightTimes()
+    
 test()
+
+
 #path()
 

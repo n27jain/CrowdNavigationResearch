@@ -118,7 +118,6 @@ def makeMap(x_edges, y_edges, nodes ):
     
 def createFile(x,y,nodes):
     f = open("output.txt",'w')
-    print("doing this shit")
     #plt.plot(x_values, y_values)
     f.write("____________________NODES:______________________")
 
@@ -131,12 +130,12 @@ def createFile(x,y,nodes):
     f.write("\n____________________South - North:______________________\n")
     f.write("\nPOINT1 |  POINT2 | D | S  | Direction | traffic_factor")
     for e in x:
-        f.write(e.printEdge())
+        f.write(e.printSelf())
         f.write("\n")
     f.write("\n____________________East - West:______________________\n")   
     f.write("\nPOINT1 |  POINT2 | D | S  | Direction | traffic_factor")
     for e in y:
-        f.write(e.printEdge())
+        f.write(e.printSelf())
         f.write("\n")
 
 def setLights(nodes):
@@ -162,7 +161,7 @@ def seeData():
     # print(x,y,n)
     return x,y,n
 
-# run()
+#run()
 # x,y,n = seeData()
 
 # for node in n :

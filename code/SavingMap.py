@@ -19,5 +19,5 @@ class SavingMap:
         print("TRYING: to get data")
         with open('map_data.pkl', 'rb') as inp:
             map1 = pickle.load(inp)
-            print(map1.x_edges[0].node_1)
+           
             return map1.x_edges, map1.y_edges , map1.nodes 
