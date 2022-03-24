@@ -47,9 +47,54 @@ def createFile(edges,nodes):
         f.write("\n")
     f.write("____________________EDGES:______________________")
     f.write("\nPOINT1 |  POINT2 | D | S  | Direction | traffic_factor")
+    f.write("\n")
     for e in edges:
         f.write(e.printSelf())
         f.write("\n")
+
+def f(n,X,D,C,Tr,Tg, Rt_0): # n is size of edges
+    t = 0
+    Penalty = 1
+
+    for i in range(n):
+        t_t = t + D[i]/ X[i] # the temporary time to check
+        if Rt_0[i] == 0:
+            #case 1
+            if t_t < Tg[0]: # move on to the next node
+                t = t_t 
+                continue
+            else:
+                A = t_t/C[i]
+                B = A * C[i]
+                if t_t < B:
+                    t += B + Penalty
+                elif t_t >= B + Tg[i]:
+                    t += C[i] * (A + 1) + Penalty
+                else:
+                    #timeArrival <= B + t_go and timeArrival > B
+                    # move on to the next node
+                    t = t_t 
+                    
+        else:
+            #case 2
+            A = t_t/C[i]
+            rightside = (A+1) * C[i]
+            leftside = C[i] * A + Tr[i]
+            if t_t <= leftside:
+                t += (leftside + Penalty)
+            elif t_t > rightside:
+                t += ((C[i] * (A+1)) + Tr[i])
+            else:
+                t = t_t 
+    return t
+
+
+def prepareSolutions(S,n):
+    # prepare an array SOL, with X solution lists
+    # using the S array, find out the max speeds a driver can drive on each edge
+    # Using S randomly select a speed (Rounded to a whole number)
+    # check and make sure that the solution did not exist in pool, 
+
 
     
 def test():
@@ -62,18 +107,24 @@ def test():
     Tr = [0,0,0,0]
     Cycle = [0,0,0,0]
     nodes.append(findNode((0,1), n)) # go North
-    nodes.append(findNode((0,2), n)) # go East 
-    nodes.append(findNode((5,2), n)) # go North
-    nodes.append(findNode((5,3), n)) # Destination
+    nodes.append(findNode((0,3), n)) # go East 
+    nodes.append(findNode((1,3), n)) # go North
+    nodes.append(findNode((2,3), n)) # Destination
 
     edges = []
-    edges.append(findEdge((0,1),(0,2), e)) # go North
-    edges.append(findEdge((0,2),(5,2), e)) # go East 
-    edges.append(findEdge((5,2),(5,3), e)) # go North
+    edges.append(findEdge((0,1),(0,3), e)) # go North
+    edges.append(findEdge((0,3),(1,3), e)) # go East 
+    edges.append(findEdge((1,3),(2,3), e)) # go North
     createFile(edges, nodes)
+
+    maxSpeeds = []
+    for edge in edges:
+        maxSpeeds.append(edge.speed * (1 - edge.traffic))
     
-    testNode = nodes[0]
-    dangerousTest(testNode)
+    for s in maxSpeeds:
+        print(s)
+    # testNode = nodes[0]
+    # dangerousTest(testNode)
     # g_at_t0.append(node.isGreenAtT_0)
     # Tg.append(node.Go_T)
     # Tr.append(node.Stop_T)

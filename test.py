@@ -21,7 +21,7 @@ class Edge:
         #TODO: Figure out exactly how to distribute the traffic 
         self.traffic = gaussian()
 
-    def printEdge(self):
+    def printSelf(self):
         out = str(self.node_1) + " | " + str(self.node_2)+ " | " + str(self.distance)+ " | " + str(self.speed)+ " | "+ str(self.direction) + " | " + str(self.traffic)
         f.write(out)
         f.write('\n')

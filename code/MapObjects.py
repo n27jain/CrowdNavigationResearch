@@ -14,6 +14,7 @@ def gaussian():
         x = random.gauss(0.5,1)
         if(x >= 0 and x <= 1):
             return x
+
 class Node:
     #Typical cycle times - 30s to 120s.
     def __init__(self, x, y):
@@ -167,7 +168,6 @@ class Node:
             out += "\n" + "    "
             out = out + " W: " + e
         return out 
-
 
 class Edge:
     def __init__(self, node_1, node_2, distance, direction):
