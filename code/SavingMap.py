@@ -1,4 +1,5 @@
 
+import os
 import pickle
 
 
@@ -16,6 +17,7 @@ class SavingMap:
             pickle.dump(map1,outp,pickle.HIGHEST_PROTOCOL)
     
     def open(self):
+        print(os.getcwd())
         print("TRYING: to get data")
         with open('map_data.pkl', 'rb') as inp:
             map1 = pickle.load(inp)

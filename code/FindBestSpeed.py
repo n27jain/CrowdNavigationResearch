@@ -4,6 +4,7 @@
 # Delay = time at traffic light + expect start up delay 
 #Let’s assume that there is an additional penalty for stopping at a red light. There usually is a 2 second delay reaction before cars can reach the expected average speed of the coming road.
 
+from itertools import cycle
 from time import time
 
 from numpy import append
@@ -97,16 +98,13 @@ def setUp():
     # normally we ignore the traffic light when we take a right turn (possible 1 second delay)
     # so for now we will combine right turns with the next node upgrade.
     
-
-    
     SM = SavingMap()
     x,y,n = SM.open()
     e = x + y # all edges list
     nodes = []
-    g_at_t0 = [0,0,0,0]
-    Tg = [0,0,0,0]
-    Tr = [0,0,0,0]
-    C = [0,0,0,0]
+    Tg = []
+    Tr = []
+    C = []
     edges = []
     S =[]
     D =[]
@@ -141,8 +139,10 @@ def setUp():
                 Rt_0.append(0)
             else:
                 Rt_0.append(1)
+    
     gA = GeneticAlgorithm()
     gA.setVars(len(edges),D,C,Tr,Tg, Rt_0, S)
+    gA.runSolver()
   
 
 def path(nodes):
