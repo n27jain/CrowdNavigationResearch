@@ -192,3 +192,4 @@ class Edge:
         out += str(self.traffic)
         return out
    
+#class Direction()
