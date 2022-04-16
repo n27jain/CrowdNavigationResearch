@@ -65,11 +65,11 @@ def createFile(edges,nodes, path):
         
         if (path[i] == 0 or path[i] == 1):
 
-            f.write("Rt_0: " + str(nodes[i+1].isGreenAtT_0) )
+            f.write("Rt_0: " + str(nodes[i+1].greenOffset) )
             f.write("\n")
            
         else:
-            if nodes[i+1].isGreenAtT_0 == 1:
+            if nodes[i+1].greenOffset >= 0 :
                 f.write("Rt_0: 0 ")
                 f.write("\n")
                 
@@ -133,7 +133,7 @@ def setUp():
         Tg.append(nodes[i+1].Go_T[path[i]])
         Tr.append(nodes[i+1].Stop_T[path[i]])
         if (path[i] == 0 or path[i] == 1):
-            Rt_0.append(nodes[i+1].isGreenAtT_0)
+            Rt_0.append(nodes[i+1].greenOffset)
         else:
             if nodes[i+1].isGreenAtT_0 == 1:
                 Rt_0.append(0)

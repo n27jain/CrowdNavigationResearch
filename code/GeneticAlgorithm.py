@@ -44,7 +44,7 @@ class GeneticAlgorithm:
             # x is in km/h
             # t = D km / x km/h = D/x h
             t_t = t + (self.D[i]/ x[i] * 1 * 60 * 60) # seconds in an hour
-            if self.Rt_0[i] == 1: # we are green on t = 0
+            if self.Rt_0[i] < 0: # we are green on t = 0
                 #case 1
                 if t_t < self.Tg[0]: # move on to the next node
                     t = t_t 
@@ -52,9 +52,9 @@ class GeneticAlgorithm:
                 else:
                     A = t_t/self.C[i]
                     B = A * self.C[i]
-                    if t_t < B:
+                    if t_t < B + self.Rt_0[i] : # n*C_C < t_t
                         t += B + Penalty
-                    elif t_t >= B + self.Tg[i]:
+                    elif t_t >= B + self.Tg[i] + self.Rt_0[i]: # 
                         t += self.C[i] * (A + 1) + Penalty
                     else:
                         #timeArrival <= B + t_go and timeArrival > B
@@ -62,7 +62,7 @@ class GeneticAlgorithm:
                         t = t_t 
                         
             else:
-                #case 2
+                #case 2 we are red
                 A = t_t/self.C[i]
                 rightside = (A+1) * self.C[i]
                 leftside = self.C[i] * A + self.Tr[i]

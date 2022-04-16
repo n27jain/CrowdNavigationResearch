@@ -121,7 +121,7 @@ def createFile(x,y,nodes):
     #plt.plot(x_values, y_values)
     f.write("____________________NODES:______________________")
 
-    f.write("\n Pos |isGreen|   Go_T E,W,S,N     | Stop_T  |Cycle Times")
+    f.write("\n Pos |eastGreenOffset|   Go_T E,W,S,N     | Stop_T  |Cycle Times")
     f.write('\n')
     for node in nodes:
         f.write(node.printSelf())
@@ -161,7 +161,7 @@ def seeData():
     # print(x,y,n)
     return x,y,n
 
-#run()
+run()
 # x,y,n = seeData()
 
 # for node in n :

@@ -25,7 +25,10 @@ class Node:
         self.G_T = [0,0,0,0]
         self.Go_T = [0,0,0,0]
         self.Stop_T = [0,0,0,0]
-        self.isGreenAtT_0 = random.randint(0,1) # this is for the X intersection. Opposite for the Y intersection
+        self.greenOffset = random.randint(0,1) # this is for the X intersection. Opposite for the Y intersection
+        if self.greenOffset == 0:
+            self.greenOffset = 1
+        else: self.greenOffset = -1 
         self.east= None
         self.west = None
         self.south = None
@@ -66,7 +69,10 @@ class Node:
         self.Y_T[1] = max(self.Y_T[0], self.Y_T[1]) #W
         self.Y_T[2] = max(self.Y_T[2], self.Y_T[3]) #S
         self.Y_T[3] = max(self.Y_T[2], self.Y_T[3]) #N
-        self.cycletime = round(60 * gaussian() + 30, 1)
+
+        # get the maximum time needed for yellow light
+        self.cycletime = round(60 * gaussian() + 30, 1) # minimum of 30 seconds and maximum of 90 seconds
+
         e_w_y = self.Y_T[0]
         s_n_y = self.Y_T[2]
         e_d = 0
@@ -84,8 +90,9 @@ class Node:
             return
         e_w_percent_green  = e_w_d / (e_w_d + s_n_d)
 
-        
+       
         self.G_T[0] = self.cycletime * e_w_percent_green - e_w_y
+
         self.G_T[1] = self.G_T[0]
         self.R_T[0] = self.cycletime - self.G_T[0] - self.Y_T[0] 
         self.R_T[1] = self.R_T[0]
@@ -107,11 +114,16 @@ class Node:
         if self.north: 
             self.Go_T[3] = self.G_T[3] + self.Y_T[3]
             self.Stop_T[3] = self.R_T[3]
+        if self.greenOffset  == -1:
+            # negative means its green
+            self.greenOffset = -1 * random.randint(0,int(self.Go_T[0]))
+        else: # means it is red
+            self.greenOffset = random.randint(0,int(self.Stop_T[0]))
 
         
     def printSelf(self):
         
-        out = "( " + str(self.x) + " " + str(self.y) + " )  |  " + str(self.isGreenAtT_0)+ " | " + str(self.Go_T) + " | " + str(self.Stop_T) + " | " + str(self.cycletime)
+        out = "( " + str(self.x) + " " + str(self.y) + " )  |  " + str(self.greenOffset)+ " | " + str(self.Go_T) + " | " + str(self.Stop_T) + " | " + str(self.cycletime)
         if self.north:
             # out += "\n north  : "
             e = self.north.printSelf()
@@ -136,7 +148,7 @@ class Node:
 
     def printSelfClear(self):
         out = "NODE: ( " + str(self.x) + " " + str(self.y) + " )  | \n "
-        out += "    x is green: " + str(self.isGreenAtT_0)+ " | \n " 
+        out += "    greenOffset : " + str(self.greenOffset)+ " | \n " 
         out += "    G_E: " + str(self.Go_T[0]) + " | \n" 
         out += "    G_W: " + str(self.Go_T[1]) + " | \n" 
         out += "    G_S: " + str(self.Go_T[2]) + " | \n" 
@@ -191,5 +203,60 @@ class Edge:
         out += str(self.direction) + " | " 
         out += str(self.traffic)
         return out
-   
+
+
+class Path:
+    def __init__(self, minSize):
+        self.minSize = minSize
+        self.nodes = []
+        self.edges = []
+        self.directions = [] 
+        self.motion = []
+
+        # motion
+        # 0 - straight
+        # 1 - right
+        # 2 - left 
+        # direction
+        # 0 - East
+        # 1 - West
+        # 2 - South 
+        # 3 - North
+
+    def printSelf(self):
+        print("Size: ",  self.minSize)
+        print("Nodes:  \n ")
+        for node in self.nodes:
+            print (node.printSelf())
+        
+        print("Edges:  \n ")
+        for edge in self.edges:
+            print(edge.printSelf())
+        print("Motion:  \n ")
+        for d in self.motion:
+            if d == 0:
+                print("straight")
+            elif d == 1:
+                print("right")
+            elif d == 2:
+                print("left")
+            else:
+                print("NONE")
+        print("Directions:  \n ")
+        for m in self.directions:
+            if m == 0:
+                print("east")
+            elif m == 1:
+                print("west")
+            elif m == 2:
+                print("south")
+            elif m == 3:
+                print("north")
+            else:
+                print("NONE")
+
+        
+
+        
+
 #class Direction()
