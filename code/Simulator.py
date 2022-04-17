@@ -15,6 +15,5 @@ for path in paths:
     i +=1 
 
 
-time, fuel  = solveThisPath(paths[0])
-print(time)
-print(fuel)
+solveThisPath(paths[0])
+

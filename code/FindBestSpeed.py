@@ -176,7 +176,7 @@ def solveThisPath(path):
     gA = GeneticAlgorithm()
     gA.setVars(N ,D ,S , C, G_T ,R_T , G_Offset, motion, path)
     solX = gA.generateNewSol()
-    time, fuel  = gA.f(solX[0])
+    gA.solveForEachX()
         
 
     # print("path.q_Seq" , path.q_Seq)
@@ -193,7 +193,7 @@ def solveThisPath(path):
 
     # print( "solX:" , solX)
     # print( "time:" , time)
-    print( "fuel:" , fuel)
-    return time, fuel
+    # print( "fuel:" , fuel)
+    # return time, fuel
     
 
