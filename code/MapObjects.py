@@ -1,6 +1,8 @@
 
 import random
 
+from matplotlib import pyplot as plt
+
 
 class Solution():
     def __init__(self, X, fitness,time):
@@ -32,15 +34,19 @@ class Node:
         self.G_T = [0,0,0,0]
         self.Go_T = [0,0,0,0]
         self.Stop_T = [0,0,0,0]
-        self.greenOffset = random.randint(0,1) # this is for the X intersection. Opposite for the Y intersection
+        self.greenOffset =  random.randint(0,1) # this is for the X intersection. Opposite for the Y intersection
         if self.greenOffset == 0:
             self.greenOffset = 1
         else: self.greenOffset = -1 
+
+        # these are edges
         self.east= None
         self.west = None
         self.south = None
         self.north = None
+
         self.cycletime = None
+        self.isIsolated = False
 
     #average cycle time 30 to 120 seconds
     def yellowTime(self,incomingSpeed):
@@ -78,7 +84,7 @@ class Node:
         self.Y_T[3] = max(self.Y_T[2], self.Y_T[3]) #N
 
         # get the maximum time needed for yellow light
-        self.cycletime = round(60 * gaussian() + 30, 1) # minimum of 30 seconds and maximum of 90 seconds
+        self.cycletime = round(60 * gaussian() + 30, 0) # minimum of 30 seconds and maximum of 90 seconds
 
         e_w_y = self.Y_T[0]
         s_n_y = self.Y_T[2]
@@ -93,8 +99,21 @@ class Node:
 
         e_w_d = max(e_d, w_d)
         s_n_d = max(n_d, s_d)
+
         if e_w_d == 0 and s_n_d == 0: # this node is isolated
+            self.isIsolated = True
             return
+        if e_w_d == 0 :
+            # there is no x direction road
+            # we need to set the cycle time to -1
+            # this node is always green for y direction
+            self.cycletime = -1
+            self.Go_T[0] = -1
+            self.Go_T[1] = -1
+            self.Go_T[2] = 0
+            self.Go_T[3] = 0
+            return
+           
         e_w_percent_green  = e_w_d / (e_w_d + s_n_d)
 
        
@@ -121,11 +140,9 @@ class Node:
         if self.north: 
             self.Go_T[3] = self.G_T[3] + self.Y_T[3]
             self.Stop_T[3] = self.R_T[3]
-        if self.greenOffset  == -1:
-            # negative means its green
-            self.greenOffset = -1 * random.randint(0,int(self.Go_T[0]))
-        else: # means it is red
-            self.greenOffset = random.randint(0,int(self.Stop_T[0]))
+        
+        self.greenOffset = -1 * random.randint( 0,int( min( self.Go_T[0], self.Go_T[2] ) ) )
+        
 
         
     def printSelf(self):
@@ -217,6 +234,7 @@ class Path:
         self.minSize = minSize
         self.nodes = []
         self.edges = []
+        self.q_Seq = [] # quick sequence of coordinates travelled for testing purposes
         self.directions = [] 
         self.motion = []
 
@@ -294,4 +312,24 @@ class Path:
                 print("north")
             else:
                 print("NONE")
+    def makeGraph(self, name):
+        # for edge in self.edges:
+            # x_val = [edge.node_1[0],edge.node_2[0]]
+            # y_val = [edge.node_1[1],edge.node_2[1]]
+            # plt.plot(x_val, y_val)
+        x, y = zip(*self.q_Seq)
+        plt.plot(x, y, '-o')
+        # plt.scatter(x, y)
+        # for edge in self.edges:
+        #     p_1 = edge.node_1
+        #     p_2 = edge.node_1
+        #     x_values = [p_1[0], p_2[0]]
+        #     y_values = [p_1[1], p_2[1]]
+        #     plt.plot(x_values, y_values)
 
+
+        plt.xlabel("East - West")
+        plt.ylabel("South - North")
+        plt.savefig(name + ".png")
+        plt.close()
+        print("DONE making path map")

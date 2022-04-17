@@ -174,7 +174,26 @@ def solveThisPath(path):
         G_Offset.append(offset)
 
     gA = GeneticAlgorithm()
-    gA.setVars(N,D,S,G_T,R_T,G_T, G_Offset, motion)
-    gA.f(x = [10,20,30,40,50,10,10])
-    return
+    gA.setVars(N ,D ,S , C, G_T ,R_T , G_Offset, motion, path)
+    solX = gA.generateNewSol()
+    time, fuel  = gA.f(solX[0])
+        
+
+    # print("path.q_Seq" , path.q_Seq)
+
+    # print( "N:" , N)
+    # print( "D:" , D)
+    # print( "S:" , S)
+    # print( "C:" , C)
+    # print( "G_T:" , G_T)
+    # print( "R_T:" , R_T)
+    # print( "G_Offset:" , G_Offset)
+    
+
+
+    # print( "solX:" , solX)
+    # print( "time:" , time)
+    print( "fuel:" , fuel)
+    return time, fuel
+    
 

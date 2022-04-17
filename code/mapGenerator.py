@@ -115,6 +115,7 @@ def makeMap(x_edges, y_edges, nodes ):
     plt.xlabel("East - West")
     plt.ylabel("South - North")
     plt.savefig('map.png')
+    plt.close()
     
 def createFile(x,y,nodes):
     f = open("output.txt",'w')

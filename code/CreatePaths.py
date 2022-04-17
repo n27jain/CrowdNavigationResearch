@@ -38,17 +38,10 @@ def createPath(path_min_len, x,y,n):
         south = None
         north = None
 
-        while (east == None 
-        and west == None 
-        and south == None 
-        and north == None): # while the node discovered has no edges
-            start_node =  n[random.randint(0,len(n) - 1)] # select a randome start node
-            # get the 4 edges is possible from this node
-            east = start_node.east
-            west = start_node.west
-            south = start_node.south
-            north = start_node.north
+        start_node =  n[random.randint(0,len(n) - 1)] # select a randome start node
 
+        while (start_node.isIsolated): # while the node discovered has no edges
+            start_node =  n[random.randint(0,len(n) - 1)] # select a randome start node
             checkedNodes.append((start_node.x, start_node.y))
 
         path.nodes.append(start_node)
@@ -68,7 +61,7 @@ def createPath(path_min_len, x,y,n):
             # 1 - West
             # 2 - South 
             # 3 - North
-            if len(path.nodes)  == 0:
+            if len(path.nodes)  == 0: # we backtracked all the way to the begining
                 return None
             curNode = path.nodes[-1] # get the last appeneded node
             lastDir = path.directions[-1] # get the last direction travelled
@@ -87,18 +80,26 @@ def createPath(path_min_len, x,y,n):
             elif lastDir == 3:
                 options[2] == None
                 
-            # Exlcude the nodes already visited
-            if options[0] != None and (options[0].node_2 in checkedNodes):
-                options[0] = None
+            # Exlcude the nodes already visited or nodes that are isolated
+            if (options[0] != None):
+                test = findNode(options[0].node_2,n)
+                if  options[0].node_2 in checkedNodes or test.isIsolated:
+                    options[0] = None
+                
+            if options[1] != None: 
+                test = findNode(options[1].node_1,n)
+                if (options[1].node_1 in checkedNodes) or test.isIsolated:
+                    options[1] = None
 
-            if options[1] != None and (options[1].node_1 in checkedNodes):
-                options[1] = None
+            if options[2] != None: 
+                test = findNode(options[2].node_1,n)
+                if (options[2].node_1 in checkedNodes) or test.isIsolated:
+                    options[2] = None
 
-            if options[2] != None and (options[2].node_1 in checkedNodes):
-                options[2] = None
-
-            if options[3] != None and (options[3].node_2 in checkedNodes):
-                options[3] = None
+            if options[3] != None: 
+                test = findNode(options[3].node_2,n)
+                if (options[3].node_2 in checkedNodes) or test.isIsolated:
+                    options[3] = None
 
             for i in range(4):
                 if options[i] == None : exclude.append(i)
@@ -176,8 +177,8 @@ def createPath(path_min_len, x,y,n):
                     checkedNodes.append(newNodeCor)
                     j = j + 1
         return path
-    except:
-        print("error")
+    except Exception as e:
+        print("error : ", e)
         return None
 
 def setUpPaths(numPaths, pathLen):
@@ -188,6 +189,8 @@ def setUpPaths(numPaths, pathLen):
         path = None
         while path == None:
             path = createPath(pathLen, x,y,n)
+        for select_node in path.nodes:
+                path.q_Seq.append((select_node.x, select_node.y))
         paths.append(path)
 
     for path in paths:
