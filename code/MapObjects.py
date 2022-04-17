@@ -1,6 +1,13 @@
 
 import random
 
+
+class Solution():
+    def __init__(self, X, fitness,time):
+        self.X = X
+        self.fitness = fitness
+        self.time = time
+
 class Map(object):
     def __init__(self, x_edges, y_edges, nodes):
         self.x_edges = x_edges
@@ -223,6 +230,39 @@ class Path:
         # 2 - South 
         # 3 - North
 
+    def writeSelf(self):
+        out = ("Size: " + str(self.minSize) + " \n")
+        out += ("Nodes:  \n ")
+        for node in self.nodes:
+            out += (node.printSelf() + "\n")
+        
+        print("Edges:  \n ")
+        for edge in self.edges:
+            out += (edge.printSelf() + "\n")
+        print("Motion:  \n ")
+        for d in self.motion:
+            if d == 0:
+                out += ("straight \n")
+            elif d == 1:
+                 out += ("right \n")
+            elif d == 2:
+                 out += ("left \n")
+            else:
+                print("NONE \n")
+        out += ("Directions:  \n ")
+        for m in self.directions:
+            if m == 0:
+                 out += ("east \n")
+            elif m == 1:
+                 out += ("west \n")
+            elif m == 2:
+                 out += ("south \n")
+            elif m == 3:
+                 out += ("north \n")
+            else:
+                 out += ("NONE \n")
+        return out
+
     def printSelf(self):
         print("Size: ",  self.minSize)
         print("Nodes:  \n ")
@@ -255,8 +295,3 @@ class Path:
             else:
                 print("NONE")
 
-        
-
-        
-
-#class Direction()

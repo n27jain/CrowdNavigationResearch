@@ -6,7 +6,7 @@ from itertools import cycle
 from time import time
 
 from numpy import append
-from mapGenerator import *
+from MapGenerator import *
 from MapObjects import *
 
 import random
@@ -18,14 +18,16 @@ def findNode(coordinate, nodes):
         if node.x == coordinate[0] and node.y == coordinate[1]: 
             return node
     return None
+def findEdge(startNode, endNode, edges):
+    for edge in edges:
+        if edge.node_1 == startNode and node.node_2 == endNode: 
+            return edge
+    return None
 
-def createPath(path_min_len):
+def createPath(path_min_len, x,y,n):
     try:
-        SM = SavingMap()
-        x,y,n = SM.open()
+        allEdges = x + y
         i = 0
-    
-
         #1.) checked nodes is none
         checkedNodes = []
         path =  Path(path_min_len) #2. start a new path
@@ -147,7 +149,17 @@ def createPath(path_min_len):
                             path.motion.append(1) # NE
                         if randSide == 1: 
                             path.motion.append(2) # NW
+
+                    # Get the updated edge instead of the pointer edge.
+                    #newEdge =  findEdge()
+                    # this_edge  = options[randSide]
+                    # newEdge =  findEdge(this_edge.node_1, this_edge.node_2, allEdges)
+
+                    # if (newEdge == None) : 
+                    #     print("FATAL ERROR. NO such edge exists")
                     
+                    # path.edges.append(newEdge)
+
                     path.edges.append(options[randSide])
                     newNode = None
                     if randSide == 0 or randSide == 3: # east or north
@@ -169,18 +181,25 @@ def createPath(path_min_len):
         return None
 
 def setUpPaths(numPaths, pathLen):
+    SM = SavingMap()
+    x,y,n = SM.open()
     paths = []
     for i in range(numPaths):
         path = None
         while path == None:
-            path = createPath(pathLen)
+            path = createPath(pathLen, x,y,n)
         paths.append(path)
 
     for path in paths:
         path.printSelf()
-
+        
+    createPathFile(paths)
     return paths
 
+def createPathFile(paths):
+    f = open("paths.txt",'w')
+    for i in range(len(paths)):
+         f.write(paths[i].writeSelf())
 
 
 

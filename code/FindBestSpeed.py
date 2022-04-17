@@ -8,10 +8,10 @@ from itertools import cycle
 from time import time
 
 from numpy import append
-from mapGenerator import *
+from MapGenerator import *
 from MapObjects import *
 from SavingMap import SavingMap
-from GeneticAlgorithm import GeneticAlgorithm
+from FixedGeneticAlgorithm import GeneticAlgorithm
 
 
 
@@ -143,26 +143,38 @@ def setUp():
     gA = GeneticAlgorithm()
     gA.setVars(len(edges),D,C,Tr,Tg, Rt_0, S)
     gA.runSolver()
-  
-
-def path(nodes):
-    # I am making a custom path for testing rn. 
-    # This should be calculated by some kind of shortest path algorithm
-    #(0,2) ->(0,4) -> (`4`,1)
-    node1 =  None
-    node2 =  None
-    node3 =  None
-    for node in nodes:
-        if node.x == 2 and node.y == 3:
-            node1 = node
-        elif node.x == 4 and node.y == 3:
-            node2 = node
-        elif node.x == 4 and node.y == 1:
-            node3 = node
-    print(node1.printSelf())
-    print(node2.printSelf())
-    print(node3.printSelf())
 
 
-setUp()
+
+def solveThisPath(path):
+    N = len(path.edges)
+    D = []
+    S = []
+    C = []
+    G_T = []
+    R_T = []
+    G_Offset = []
+    motion = path.motion
+    nodes = path.nodes
+
+    for edge in path.edges:
+        D.append(edge.distance)
+        # TODO: path has edges that are not complete. Missing speed limit change
+        S.append(edge.speed * (1 - edge.traffic))
+    for i in range( 0,len(path.nodes) - 1 ): # we can ignore the last light as it is the destination
+        node = path.nodes[i]
+        direction = path.directions[i+1]
+        C.append(node.cycletime)
+        G_T.append(node.Go_T[direction])
+        R_T.append(node.Stop_T[direction])
+        
+        offset = node.greenOffset
+        if direction > 1:
+            offset *= -1 # reverse the offset value because we are waiting for N or S light
+        G_Offset.append(offset)
+
+    gA = GeneticAlgorithm()
+    gA.setVars(N,D,S,G_T,R_T,G_T, G_Offset, motion)
+    gA.f(x = [10,20,30,40,50,10,10])
+    return
 

@@ -15,7 +15,7 @@ class GeneticAlgorithm:
         self.pc = pc
         self.pm = pm
         self.chromosomes = []
-        self.n = None
+        self.N = None
         self.D = []
         self.C = []
         self.Tr = []
@@ -26,8 +26,10 @@ class GeneticAlgorithm:
         self.Cost = []
         self.totalFitness = 0
 
-    def setVars(self,n,D,C,Tr,Tg, Rt_0, speed):
-        self.n = n
+    def setVars(self,N,D,C,Tr,Tg, Rt_0, speed):
+        
+
+        self.N = N
         self.D = D
         self.C = C
         self.Tr = Tr
@@ -35,7 +37,7 @@ class GeneticAlgorithm:
         self.Rt_0 = Rt_0
         self.speed = speed
 
-    def f(self,x): # this is the f function. it is the score we want to minimize
+    def f(self, x ): # this is the f function. it is the score we want to minimize
         t = 0
         Penalty = 1
 

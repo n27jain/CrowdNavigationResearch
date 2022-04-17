@@ -15,8 +15,8 @@ from MapObjects import *
     
 
 
-w_grid = 5
-h_grid = 5
+w_grid = 7
+h_grid = 7
 
 map = None
 
@@ -141,6 +141,8 @@ def createFile(x,y,nodes):
 def setLights(nodes):
     for node in nodes:
         node.setLightTimes()
+
+
 def run():        
     nodes = makeNodes(w_grid,h_grid)
     x_e, y_e, nodes = makeEdges(nodes)
@@ -154,6 +156,19 @@ def run():
     # jsonStr = json.dumps(nodes[0].__dict__)
     # print(jsonStr)
 
+
+
+
+
+def runCustom(g_w, g_h,filename = None):
+    nodes = makeNodes(g_w,g_h)
+    x_e, y_e, nodes = makeEdges(nodes)
+    makeMap(x_e,y_e,nodes)
+    setLights(nodes)
+    createFile(x_e,y_e,nodes=nodes)
+    SM = SavingMap()
+    SM.saveData(x_e,y_e,nodes)
+
 def seeData():
     SM = SavingMap()
     x,y,n = SM.open()
@@ -161,7 +176,7 @@ def seeData():
     # print(x,y,n)
     return x,y,n
 
-run()
+# run()
 # x,y,n = seeData()
 
 # for node in n :
