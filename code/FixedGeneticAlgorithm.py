@@ -274,14 +274,32 @@ class GeneticAlgorithm:
                         cloneList[index_A][0][k] = cloneList[index_B][0][k]
             self.X = copy.deepcopy(cloneList)
     
+
+    def mutation(self):
+        # for each chromosome (excluding the 2 best fit pair) run a randome number generator 
+        # if the number is less than the ratio then randomly select a speed value.
+        # do this for each speed value in a solution X
+        # return the children 
+        clone = copy.deepcopy(self.X)
+        for i in range(2,self.population):
+            for j in range(len(self.X[0][0])):
+                check = round(random.uniform(0,1),2) 
+                if check <= self.pm:
+                    clone[i][0][j] = random.randint(1, round(self.S[j])) # get a randomized speed for this chromosome
+        self.X = copy.deepcopy(clone)
+        print("DONE")
     
     
     
     def run(self):
         self.generateNewSol() #create 50 random solutions to begin with
-        self.solveForEachX()
-        self.russianRoulette()
-        self.crossOver()
+
+        for i in range(self.generations):
+            self.solveForEachX()
+            self.russianRoulette()
+            self.crossOver()
+            self.mutation()
+        
 
         
 

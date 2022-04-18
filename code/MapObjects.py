@@ -10,6 +10,11 @@ class Solution():
         self.fitness = fitness
         self.time = time
 
+
+class Paths(object):
+    def __init__(self, paths):
+        self.paths = paths
+    
 class Map(object):
     def __init__(self, x_edges, y_edges, nodes):
         self.x_edges = x_edges

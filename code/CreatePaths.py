@@ -1,14 +1,6 @@
-from curses import echo
-from os import stat
 from SavingMap import SavingMap
-
-from itertools import cycle
-from time import time
-
-from numpy import append
 from MapGenerator import *
 from MapObjects import *
-
 import random
 from random import choice
 
@@ -200,10 +192,15 @@ def setUpPaths(numPaths, pathLen):
     return paths
 
 def createPathFile(paths):
+    SM = SavingMap()
+    SM.savePaths(paths)
     f = open("paths.txt",'w')
     for i in range(len(paths)):
          f.write(paths[i].writeSelf())
 
-
+def getPathsFromSaveData():
+    SM = SavingMap()
+    paths = SM.openPaths()
+    return paths
 
 
