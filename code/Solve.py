@@ -7,10 +7,10 @@
 
 from MapGenerator import *
 from MapObjects import *
-from FixedGeneticAlgorithm import GeneticAlgorithm
+from GeneticAlgorithm import GeneticAlgorithm
 
 
-def solveThisPath(path):
+def solveThisPath(path,pop,gen,pc,pm):
     N = len(path.edges)
     D = []
     S = []
@@ -37,9 +37,9 @@ def solveThisPath(path):
             offset *= -1 # reverse the offset value because we are waiting for N or S light
         G_Offset.append(offset)
 
-    gA = GeneticAlgorithm()
+    gA = GeneticAlgorithm(population= pop,generations =  gen, pc =  pc, pm = pm)
     gA.setVars(N ,D ,S , C, G_T ,R_T , G_Offset, motion, path)
-    gA.run()
+    return gA.run()
     
     
 

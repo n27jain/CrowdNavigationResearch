@@ -317,24 +317,15 @@ class Path:
                 print("north")
             else:
                 print("NONE")
-    def makeGraph(self, name):
-        # for edge in self.edges:
-            # x_val = [edge.node_1[0],edge.node_2[0]]
-            # y_val = [edge.node_1[1],edge.node_2[1]]
-            # plt.plot(x_val, y_val)
+    def makeGraph(self, name, xmax = None, ymax =  None):
+      
         x, y = zip(*self.q_Seq)
         plt.plot(x, y, '-o')
-        # plt.scatter(x, y)
-        # for edge in self.edges:
-        #     p_1 = edge.node_1
-        #     p_2 = edge.node_1
-        #     x_values = [p_1[0], p_2[0]]
-        #     y_values = [p_1[1], p_2[1]]
-        #     plt.plot(x_values, y_values)
-
-
+        if xmax != None :
+            plt.axis([0,xmax, 0, ymax])
         plt.xlabel("East - West")
         plt.ylabel("South - North")
         plt.savefig(name + ".png")
         plt.close()
+        
         print("DONE making path map")

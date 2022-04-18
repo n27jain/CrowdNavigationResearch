@@ -173,7 +173,7 @@ def createPath(path_min_len, x,y,n):
         print("error : ", e)
         return None
 
-def setUpPaths(numPaths, pathLen):
+def setUpPaths(numPaths, pathLen, xmax = None, ymax =  None):
     SM = SavingMap()
     x,y,n = SM.open()
     paths = []
@@ -184,9 +184,10 @@ def setUpPaths(numPaths, pathLen):
         for select_node in path.nodes:
                 path.q_Seq.append((select_node.x, select_node.y))
         paths.append(path)
-
-    for path in paths:
-        path.printSelf()
+    for i in range(len(paths)):
+        paths[i].printSelf()
+        title = "Paths/" + "path" + str(i)
+        paths[i].makeGraph(title, xmax, ymax)
         
     createPathFile(paths)
     return paths
@@ -194,9 +195,9 @@ def setUpPaths(numPaths, pathLen):
 def createPathFile(paths):
     SM = SavingMap()
     SM.savePaths(paths)
-    f = open("paths.txt",'w')
-    for i in range(len(paths)):
-         f.write(paths[i].writeSelf())
+    # f = open("paths/paths.txt",'w')
+    # for i in range(len(paths)):
+    #      f.write(paths[i].writeSelf())
 
 def getPathsFromSaveData():
     SM = SavingMap()
