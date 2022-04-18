@@ -42,12 +42,9 @@ class GeneticAlgorithm:
         #  one value that contains fitness
         #[  [x,x,x,x,] , time, fuel, score, fitness ]
         self.X = []
-        self.Outputs = [] # this is the scores time, fuel
+        self.worst = None
 
         self.totalFitness = 0
-       
-
-
         self.path = None
 
 
@@ -169,9 +166,15 @@ class GeneticAlgorithm:
 
         for x in self.X:
             x[3] = self.getScore(x[1],x[2])
-
+        self.X = sorted(self.X, key=lambda sol: (sol[3]) )
+        self.worst  = self.X[0][3]
+        for x in self.X:
+            x[3] -= self.worst
+        self.baseX[3] -= self.worst
+        self.X.append(copy.deepcopy(self.baseX))
+        self.X = sorted(self.X, key=lambda sol: (sol[3]) )
         self.convertToFitness()
-
+        
         return
 
 
@@ -193,31 +196,30 @@ class GeneticAlgorithm:
     def getScore(self, T, F):
         t_0 = self.baseX[1]
         f_0 = self.baseX[2]
-        out = ((f_0 - F) * self.fuelCost) - (( self.wage * self.wageValueFactor )* (-1) * t_0 - T)
+        delta_f =  f_0 - F
+        delta_t = t_0 - T
+        out = ( delta_f * self.fuelCost) + (self.wage * self.wageValueFactor *  delta_t)
         return out
 
     def convertToFitness(self):
         tF = 0 # total fitness
+        total = 0
         for x in self.X:
             tF += x[3]
         for x in self.X:
             x[4] = x[3]/ tF
+            total += x[4]
         self.totalFitness = tF
+        self.X = sorted(self.X, key=lambda sol: (sol[4]) , reverse=True )
+        print("total: ", total)
 
     def russianRoulette(self): 
-    
-        rouletteRatio = []
         surviors = []
 
-        # keep the best two based off relative fitness
-
+        # keep the best two based off relative fitness including the base solution
         
-        surviors.append(copy.deepcopy(self.fitness[-1].X))
-        surviors.append(copy.deepcopy(self.fitness[-2].X))
-        last = 0
-        for sol in self.Cost:
-            last += sol.fitness/self.totalFitness
-            rouletteRatio.append(last)
+        surviors.append(copy.deepcopy(self.X[0]))
+        surviors.append(copy.deepcopy(self.X[1]))
         
         for i in range(self.population - 2):
             # lets keep it significant by 5 decimal places since there are many possible ties at 
@@ -225,13 +227,61 @@ class GeneticAlgorithm:
             # we should also not keep 1 as a possibly randomly generated number. 
             # from experimentation the sum of the surviors is arround 0.9999999999999996
             
-            check = round(random.uniform(0, 0.99999),5)
-            for i in range(len(self.Cost)):
-                if rouletteRatio[i] >= check:
-                    surviors.append(copy.deepcopy(self.Cost[i].X))
+            check = round(random.uniform(0, 0.99999999),8)
+            concat  = 0
+            for j in range(len(self.X)):
+                concat += self.X[j][4]
+                if concat >= check:
+                    surviors.append(copy.deepcopy(self.X[j]))
                     break
         self.X = copy.deepcopy(surviors)
-     
+
+    def crossOver(self):
+            # cross over chromosomes 
+            # exclude the 2 fittest solutions
+            # crossover produces 2 childern who switch their chromosome values at a pivot point
+           
+            index_swap = []
+            cloneList  = copy.deepcopy(self.X)
+            index_A = None
+            index_B = None
+           
+            for i in range(2,self.population):
+
+                check = round(random.uniform(0,1),2) #TODO: fix for more nodes
+
+                if check <= self.pc: #this chromosome needs to be crossed over 
+                    index_swap.append(i)
+        
+            if(len(index_swap) <= 1): 
+                # only one chromosome to cross over
+                #hence do nothing and let the solutions remain the same
+                return 
+
+            for j in range(len(index_swap)):
+                if j == (len(index_swap)-1): # last element must cross over with the first 
+                  
+                    index_A = index_swap[j]
+                    index_B = index_swap[0]
+                else:
+                    index_A = index_swap[j]
+                    index_B = index_swap[j+1]
+                
+                crossOverPoint = int(round(random.uniform(1,len(self.X[0][0]) - 1),0))
+                
+                for k in range(len(self.X[0][0])):
+                    if k >= crossOverPoint:
+                        cloneList[index_A][0][k] = cloneList[index_B][0][k]
+            self.X = copy.deepcopy(cloneList)
+    
+    
+    
+    
+    def run(self):
+        self.generateNewSol() #create 50 random solutions to begin with
+        self.solveForEachX()
+        self.russianRoulette()
+        self.crossOver()
 
         
 

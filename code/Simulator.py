@@ -6,7 +6,7 @@ from MapGenerator import *
 from CreatePaths import *
 from FindBestSpeed import *
 
-runCustom(5,5)
+#runCustom(5,5)
 
 paths = setUpPaths(10, 3)
 i = 0

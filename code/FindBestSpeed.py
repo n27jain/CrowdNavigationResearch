@@ -175,10 +175,7 @@ def solveThisPath(path):
 
     gA = GeneticAlgorithm()
     gA.setVars(N ,D ,S , C, G_T ,R_T , G_Offset, motion, path)
-    solX = gA.generateNewSol()
-    gA.solveForEachX()
-        
-
+    gA.run()
     # print("path.q_Seq" , path.q_Seq)
 
     # print( "N:" , N)
