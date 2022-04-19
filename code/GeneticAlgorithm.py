@@ -84,6 +84,8 @@ class GeneticAlgorithm:
        # else
         # otherwise proceed to the algorithmn as usual
         for i in range(0, len(self.D) ):
+            if x[i] == 0: 
+                x[i] = 0.1
             t_t = (self.D[i]/ x[i] * 1 * 60 * 60) #time taken on this edge
             
             if (i + 1 ) != len(self.D):
@@ -187,10 +189,16 @@ class GeneticAlgorithm:
                 if i == 0:
                     x.append(round(self.S[j], 0))
                 else:
+                    # print("S: ", self.S[j] )
                     if self.S[j] > 30:
-                        x.append(random.randint(30, round(self.S[j], 0)))
+                        x.append( random.randint(30, round(self.S[j], 0) ) )
+                    elif self.S[j] <= 0: # there was an error in this path. go at a steady 0.1 km/h
+                        x.append(0.1)
+                    elif self.S[j] < 1:
+                        x.append( round( random.uniform(0.1, self.S[j]) , 1 ) ) 
                     else:
-                        x.append(random.randint(1, round(self.S[j], 0))) 
+                        x.append( round( random.uniform(0.1, self.S[j]) , 1 ) ) 
+
             
             save = [x, -1,-1,-1,-1] # the x solution and null values for the computations
             if i == 0 :

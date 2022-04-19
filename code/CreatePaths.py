@@ -173,20 +173,26 @@ def createPath(path_min_len, x,y,n):
         print("error : ", e)
         return None
 
-def setUpPaths(numPaths, pathLen, xmax = None, ymax =  None):
+def setUpPaths(path_dir, numPaths, pathLen, xmax = None, ymax =  None):
     SM = SavingMap()
     x,y,n = SM.open()
     paths = []
-    for i in range(numPaths):
+    path_seq = []
+    i = 0
+    while i < numPaths:
         path = None
         while path == None:
             path = createPath(pathLen, x,y,n)
         for select_node in path.nodes:
                 path.q_Seq.append((select_node.x, select_node.y))
-        paths.append(path)
+        if not path.q_Seq in path_seq:
+            i += 1
+            paths.append(path)
+            path_seq.append(path.q_Seq)
+
     for i in range(len(paths)):
         paths[i].printSelf()
-        title = "Paths/" + "path" + str(i)
+        title = path_dir + "path" + str(i)
         paths[i].makeGraph(title, xmax, ymax)
         
     createPathFile(paths)
