@@ -423,14 +423,14 @@ def prepareFile(f_name, base, results, title  ):
 
 def convertPathToStringResult(p_number, base, results):
     out = "Path " + str(p_number) + " : "
-    base = "BASE : " + str(base)
-    best = results[-1] # the last most solution
+    base = "BASE : " + str(base) 
+    best = results[-1][0] # the last most solution
     genFound  = 0
     for i in range(len(results)):
-        if results[i] == best:
+        if results[i][0] == best:
             genFound = i
             break
-    out = out + " " + base + " " + " BEST : " + str(best) + " GEN : " + str(genFound)
+    out = out + " \n " + base + "\n " + " BEST : " + str(results[-1]) + " \n GEN : " + str(genFound) + "\n"
     return out
 def exportFinalStringToFile(string):
     f = open("ResultSummary/results.txt",'w')
