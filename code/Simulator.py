@@ -390,14 +390,24 @@ def experiment_2():
     
     exportFinalStringToFile(finalFinalResultString)
     
-def STTP():
-    # runCustom(8,8)
-    # experiment_1()
-    experiment_2()
-
-
-#Adaptive Traffic Light System
 def experiment_3():
+    paths = setUpPaths("Paths/experiment3/", 1,20,xmax = 8, ymax = 8)
+    population=50
+    generations = 100
+    pc = 0.6
+    pm =0.4
+    
+    base, results = solveThisPath(paths[0],population,generations,pc,pm)
+    fname = "Experiment3/result" + "_" + ".txt" 
+    title  = "population: " + str(population)+ " generations: " + str(generations) +" pc: " + str(pc) +" pm: "+ str(pm)                    
+    announcement = "No Variation \n"
+    title = announcement + title       
+    prepareFile(fname,base,results,title)
+   
+    
+    
+#Adaptive Traffic Light System
+def experiment_4():
     #same 8x8 map
     # 10 paths each with a length of 6
     # variation in take pm, pc, generation and population from experiment 2
@@ -435,6 +445,14 @@ def convertPathToStringResult(p_number, base, results):
 def exportFinalStringToFile(string):
     f = open("ResultSummary/results.txt",'w')
     f.write(string)
+
+
+def STTP():
+    # runCustom(8,8)
+    # experiment_1()
+    experiment_3()
+
+
 
 STTP()
 

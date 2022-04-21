@@ -299,11 +299,15 @@ class GeneticAlgorithm:
             for j in range(len(self.X[0][0])):
                 check = round(random.uniform(0,1),2) 
                 if check <= self.pm:
+
                     if self.S[j] > 30:
-                        clone[i][0][j] = random.randint(30, round(self.S[j], 0))
+                         clone[i][0][j] =  random.randint(30, round(self.S[j], 0) ) 
+                    elif self.S[j] <= 0: # there was an error in this path. go at a steady 0.1 km/h
+                        clone[i][0][j] = 0.1
+                    elif self.S[j] < 1:
+                        clone[i][0][j] = round( random.uniform(0.1, self.S[j]) , 1 ) 
                     else:
-                        clone[i][0][j] = random.randint(1, round(self.S[j], 0))
-             
+                        clone[i][0][j] = round( random.uniform(0.1, self.S[j]) , 1 ) 
         self.X = copy.deepcopy(clone)
     
     
