@@ -339,14 +339,20 @@ class GeneticAlgorithmnAdaptive:
         self.wage = 30.69
         self.wageValueFactor = 0.5
         self.fuelCost = 1.809 # dollars per liter
+        self.numberTravellersArray = [10,5,5,1,1,1,1,1,]
         
         self.nodesChromosomes = [] # <list> of nodes, scoresum of paths, scoresum of path's fuel consumption
         
-        self.baseChromosome = []  # <list> of nodes, scoresum of paths trip time, scoresum of path's fuel consumption
+        self.baseChromosome = [None,-1,-1,-1,-1] # <list> of nodes, scoresum of paths trip time, scoresum of path's fuel consumption
         self.baseSolutionFound  = False
 
         self.paths = [] # a list of <path>
         self.bestPathsSol = [] # generation #, solution
+
+    
+
+
+
 
     def f(self, chromosome):
         # provided the chromosome for the nodes
@@ -357,7 +363,7 @@ class GeneticAlgorithmnAdaptive:
         # return
         total_time = 0
         total_fuel = 0
-        
+        q = 0
         for path in self.paths:
             N = len(path.edges)
             D = []
@@ -389,8 +395,9 @@ class GeneticAlgorithmnAdaptive:
             basePath , bestSol = gA.run()
             time =  bestSol[-1][1]
             fuel = bestSol[-1][2]
-            total_time += time
-            total_fuel += fuel
+            total_time += (time * self.numberTravellersArray[q])
+            total_fuel += (fuel* self.numberTravellersArray[q])
+            q += 1
         return total_time, total_fuel
 
        
@@ -404,7 +411,7 @@ class GeneticAlgorithmnAdaptive:
 
         for i in range(self.population):
             nodesList = []
-            for node in self.baseChromosome:
+            for node in self.baseChromosome[0]:
                 newNode  = copy.deepcopy(node)
                 newNode.setLightTimes(random_genetic = True)
                 nodesList.append(newNode)

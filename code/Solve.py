@@ -5,10 +5,11 @@
 #Let’s assume that there is an additional penalty for stopping at a red light. There usually is a 2 second delay reaction before cars can reach the expected average speed of the coming road.
 
 
+from jmespath import search
 from MapGenerator import *
 from MapObjects import *
 from GeneticAlgorithm import GeneticAlgorithm
-
+from GeneticAlgorithm import GeneticAlgorithmnAdaptive
 
 def solveThisPath(path,pop,gen,pc,pm):
     N = len(path.edges)
@@ -45,44 +46,17 @@ def solveAdaptive(paths):
     nodes = []
 
     for path in paths:
-        nodes.extend(path.nodes)
-    # convert set of nodes to     
-    nodes = list(set(nodes))
+        for node in path.nodes:
+            searchNode = findNode((node.x, node.y) , nodes)
+            if searchNode == None:
+                nodes.append(node)
+    gA = GeneticAlgorithmnAdaptive()
+    gA.paths = paths
+    gA.baseChromosome[0] = nodes
+    gA.run()
+    
 
-    base = []
-    results = []
-
-    # now solve each path 
-    for path in paths:
-       
-        N = len(path.edges)
-        D = []
-        S = []
-        C = []
-        G_T = []
-        R_T = []
-        G_Offset = []
-        motion = path.motion
-        nodes = path.nodes
-
-        for edge in path.edges:
-            D.append(edge.distance)
-            S.append(edge.speed * (1 - edge.traffic))
-        for i in range( 0,len(path.nodes) - 1 ):
-            node = path.nodes[i]
-            direction = path.directions[i+1]
-            C.append(node.cycletime)
-            G_T.append(node.Go_T[direction])
-            R_T.append(node.Stop_T[direction])
-            
-            offset = node.greenOffset
-            if direction > 1:
-                offset *= -1 # reverse the offset value because we are waiting for N or S light
-            G_Offset.append(offset)
-            gA = GeneticAlgorithm()
-            gA.setVars(N ,D ,S , C, G_T ,R_T , G_Offset, motion, path)
-
-
+   
     # now for each path we need to update the value based off the nodes list.
 
 

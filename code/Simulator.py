@@ -420,7 +420,7 @@ def experiment_4():
     paths.append(setUpPaths("Paths/experiment4/path5",1,random.randint(6,25),xmax = 8, ymax = 8)[0])
     paths.append(setUpPaths("Paths/experiment4/path6",1,random.randint(6,25),xmax = 8, ymax = 8)[0])
     paths.append(setUpPaths("Paths/experiment4/path7",1,random.randint(6,25),xmax = 8, ymax = 8)[0])
-
+    solveAdaptive(paths)
     # solve each path
     # store the nodes of each path 
     # then run GA to each node 
@@ -466,7 +466,7 @@ def exportFinalStringToFile(string):
 def STTP():
     # runCustom(8,8)
     # experiment_1()
-    experiment_3()
+    experiment_4()
 
 
 
