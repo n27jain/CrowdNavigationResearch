@@ -105,7 +105,7 @@ def createPath(path_min_len, x,y,n):
                     path.motion.pop()
                 j = j - 1
                 if j < 0: 
-                    #print("Bad run get new route")
+                    print("Bad run get new route")
                     return None
             else:
 
@@ -164,7 +164,7 @@ def createPath(path_min_len, x,y,n):
                         newNodeCor =  options[randSide].node_1
                     
                     newNode = findNode(newNodeCor,n)
-                    if newNode == None: return None
+                    if newNode == None: print("Fatal error. Node searched but does not exist")
                     path.nodes.append(newNode)
                     checkedNodes.append(newNodeCor)
                     j = j + 1
