@@ -23,7 +23,6 @@ def solveThisPath(path,pop,gen,pc,pm):
 
     for edge in path.edges:
         D.append(edge.distance)
-        # TODO: path has edges that are not complete. Missing speed limit change
         S.append(edge.speed * (1 - edge.traffic))
     for i in range( 0,len(path.nodes) - 1 ): # we can ignore the last light as it is the destination
         node = path.nodes[i]
@@ -41,5 +40,49 @@ def solveThisPath(path,pop,gen,pc,pm):
     gA.setVars(N ,D ,S , C, G_T ,R_T , G_Offset, motion, path)
     return gA.run()
     
-    
+
+def solveAdaptive(paths):
+    nodes = []
+
+    for path in paths:
+        nodes.extend(path.nodes)
+    # convert set of nodes to     
+    nodes = list(set(nodes))
+
+    base = []
+    results = []
+
+    # now solve each path 
+    for path in paths:
+       
+        N = len(path.edges)
+        D = []
+        S = []
+        C = []
+        G_T = []
+        R_T = []
+        G_Offset = []
+        motion = path.motion
+        nodes = path.nodes
+
+        for edge in path.edges:
+            D.append(edge.distance)
+            S.append(edge.speed * (1 - edge.traffic))
+        for i in range( 0,len(path.nodes) - 1 ):
+            node = path.nodes[i]
+            direction = path.directions[i+1]
+            C.append(node.cycletime)
+            G_T.append(node.Go_T[direction])
+            R_T.append(node.Stop_T[direction])
+            
+            offset = node.greenOffset
+            if direction > 1:
+                offset *= -1 # reverse the offset value because we are waiting for N or S light
+            G_Offset.append(offset)
+            gA = GeneticAlgorithm()
+            gA.setVars(N ,D ,S , C, G_T ,R_T , G_Offset, motion, path)
+
+
+    # now for each path we need to update the value based off the nodes list.
+
 

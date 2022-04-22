@@ -391,11 +391,13 @@ def experiment_2():
     exportFinalStringToFile(finalFinalResultString)
     
 def experiment_3():
-    paths = setUpPaths("Paths/experiment3/", 1,20,xmax = 8, ymax = 8)
+    # paths = setUpPaths("Paths/experiment3/", 1,20,xmax = 8, ymax = 8)
+
+    paths = getPathsFromSaveData()
     population=50
     generations = 100
     pc = 0.6
-    pm =0.4
+    pm = 0.4
     
     base, results = solveThisPath(paths[0],population,generations,pc,pm)
     fname = "Experiment3/result" + "_" + ".txt" 
@@ -409,11 +411,25 @@ def experiment_3():
 #Adaptive Traffic Light System
 def experiment_4():
     #same 8x8 map
-    # 10 paths each with a length of 6
-    # variation in take pm, pc, generation and population from experiment 2
-    # run experiment on traffic lights 
-    # variation in pm, pc, generation, populations 
-    # compare results
+    paths = []
+    paths.append(setUpPaths("Paths/experiment4/path0",1,random.randint(6,25),xmax = 8, ymax = 8)[0])
+    paths.append(setUpPaths("Paths/experiment4/path1",1,random.randint(6,25),xmax = 8, ymax = 8)[0])
+    paths.append(setUpPaths("Paths/experiment4/path2",1,random.randint(6,25),xmax = 8, ymax = 8)[0])
+    paths.append(setUpPaths("Paths/experiment4/path3",1,random.randint(6,25),xmax = 8, ymax = 8)[0])
+    paths.append(setUpPaths("Paths/experiment4/path4",1,random.randint(6,25),xmax = 8, ymax = 8)[0])
+    paths.append(setUpPaths("Paths/experiment4/path5",1,random.randint(6,25),xmax = 8, ymax = 8)[0])
+    paths.append(setUpPaths("Paths/experiment4/path6",1,random.randint(6,25),xmax = 8, ymax = 8)[0])
+    paths.append(setUpPaths("Paths/experiment4/path7",1,random.randint(6,25),xmax = 8, ymax = 8)[0])
+
+    # solve each path
+    # store the nodes of each path 
+    # then run GA to each node 
+    # 
+    
+
+
+   
+
     return
 
 

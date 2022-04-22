@@ -169,12 +169,13 @@ class GeneticAlgorithm:
 
         for x in self.X:
             x[3] = self.getScore(x[1],x[2])
+
+        self.X.append(copy.deepcopy(self.baseX))
         self.X = sorted(self.X, key=lambda sol: (sol[3]) )
         self.worst  = self.X[0][3]
         for x in self.X:
             x[3] -= self.worst
-        self.baseX[3] -= self.worst
-        self.X.append(copy.deepcopy(self.baseX))
+       
         self.X = sorted(self.X, key=lambda sol: (sol[3]) )
         self.convertToFitness()
         
@@ -329,7 +330,213 @@ class GeneticAlgorithm:
         
 
 
+class GeneticAlgorithmnAdaptive:
+    def __init__(self,population=50,generations = 150, pc = 0.6, pm =0.4):
+        self.population = population
+        self.generations = generations
+        self.pc = pc
+        self.pm = pm
+        self.wage = 30.69
+        self.wageValueFactor = 0.5
+        self.fuelCost = 1.809 # dollars per liter
+        
+        self.nodesChromosomes = [] # <list> of nodes, scoresum of paths, scoresum of path's fuel consumption
+        
+        self.baseChromosome = []  # <list> of nodes, scoresum of paths trip time, scoresum of path's fuel consumption
+        self.baseSolutionFound  = False
 
+        self.paths = [] # a list of <path>
+        self.bestPathsSol = [] # generation #, solution
 
-
+    def f(self, chromosome):
+        # provided the chromosome for the nodes
+        # for each path find the best solution
+        # then muliply the path solution by the number of travellers
+        # store the best solutions for each path
+        # sum up their results 
+        # return
+        total_time = 0
+        total_fuel = 0
+        
+        for path in self.paths:
+            N = len(path.edges)
+            D = []
+            S = []
+            C = []
+            G_T = []
+            R_T = []
+            G_Offset = []
+            motion = path.motion
+            for edge in path.edges:
+                D.append(edge.distance)
+                S.append(edge.speed * (1 - edge.traffic))
             
+            for i in range( 0,len(path.nodes) - 1 ): # we can ignore the last light as it is the destination
+                searchNode = path.nodes[i]
+                node = findNode((searchNode.x, searchNode.y), chromosome[0])
+                direction = path.directions[i+1]
+                C.append(node.cycletime)
+                G_T.append(node.Go_T[direction])
+                R_T.append(node.Stop_T[direction])
+                
+                offset = node.greenOffset
+                if direction > 1:
+                    offset *= -1 # reverse the offset value because we are waiting for N or S light
+                G_Offset.append(offset)
+
+            gA = GeneticAlgorithm()
+            gA.setVars(N ,D ,S , C, G_T ,R_T , G_Offset, motion, path)
+            basePath , bestSol = gA.run()
+            time =  bestSol[-1][1]
+            fuel = bestSol[-1][2]
+            total_time += time
+            total_fuel += fuel
+        return total_time, total_fuel
+
+       
+    def generateNewSol(self):
+        # call setLightTimes(random_genetic = True) for each node in the node list
+        # create an array of these nodes.
+        # do this the # of population
+        # store them in a biggerList
+        listOfNodesList = []
+        nodesList = []
+
+        for i in range(self.population):
+            nodesList = []
+            for node in self.baseChromosome:
+                newNode  = copy.deepcopy(node)
+                newNode.setLightTimes(random_genetic = True)
+                nodesList.append(newNode)
+            save = [nodesList,-1,-1,-1,-1]
+            listOfNodesList.append(save)
+        self.nodesChromosomes = listOfNodesList
+        return
+
+    def getScore(self,T,F):
+        t_0 = self.baseChromosome[1]
+        f_0 = self.baseChromosome[2]
+        delta_f =  f_0 - F
+        delta_t = t_0 - T
+        out = ( delta_f * self.fuelCost) + (self.wage * self.wageValueFactor *  delta_t)
+        return out
+
+    def convertToFitness(self):
+        tF = 0 # total fitness
+        total = 0
+        for chrome in self.nodesChromosomes:
+            tF += chrome[3]
+        for chrome in self.nodesChromosomes:
+            chrome[4] = chrome[3]/ tF
+            total += chrome[4]
+        self.nodesChromosomes = sorted(self.nodesChromosomes, key=lambda sol: (sol[4]) , reverse=True )
+
+    
+    def solveForEachY(self):
+        # solve for the base case first
+        if not self.baseSolutionFound:
+            time, fuel = self.f(self.baseChromosome)
+            self.baseChromosome[1] = time
+            self.baseChromosome[2] = fuel
+            self.baseChromosome[3] = self.getScore(time,fuel)
+            self.baseSolutionFound =  True
+        # Then for each nodesList in  nodesChromosomes 
+        # run then function and get back the results for each path
+        # multiply the results of the path with its number of travellers
+        # sum the solutions
+
+        for chrome in self.nodesChromosomes:
+            time, fuel = self.f(chrome)
+            chrome[1] = time
+            chrome[2] = fuel
+            chrome[3] = self.getScore(time,fuel)
+        self.nodesChromosomes.append(copy.deepcopy(self.baseChromosome))
+        self.nodesChromosomes = sorted(self.nodesChromosomes, key=lambda sol: (sol[3]))
+        worst = self.nodesChromosomes[0][3]
+        for sol in self.nodesChromosomes:
+            sol[3] -= worst
+        self.nodesChromosomes = sorted(self.nodesChromosomes, key=lambda sol: (sol[3]))
+        self.convertToFitness()
+        return
+
+    def russianRoulette(self):
+        surviors = []
+        surviors.append(copy.deepcopy(self.nodesChromosomes[0]))
+        surviors.append(copy.deepcopy(self.nodesChromosomes[1]))
+        for i in range(self.population -2):
+            check = round(random.uniform(0, 0.99999999),8)
+            concat  = 0
+            for j in range(len(self.nodesChromosomes)):
+                concat += self.nodesChromosomes[j][4]
+                if concat >= check:
+                    surviors.append(copy.deepcopy(self.nodesChromosomes[j]))
+                    break
+        self.nodesChromosomes = copy.deepcopy(surviors)
+        return
+    
+    def crossOver(self):
+            # cross over chromosomes 
+            # exclude the 2 fittest solutions
+            # crossover produces 2 childern who switch their chromosome values at a pivot point
+           
+            index_swap = []
+            cloneList  = copy.deepcopy(self.nodesChromosomes)
+            index_A = None
+            index_B = None
+           
+            for i in range(2,self.population):
+
+                check = round(random.uniform(0,1),2) 
+
+                if check <= self.pc: #this chromosome needs to be crossed over 
+                    index_swap.append(i)
+        
+            if(len(index_swap) <= 1): 
+                # only one chromosome to cross over
+                #hence do nothing and let the solutions remain the same
+                return 
+
+            for j in range(len(index_swap)):
+                if j == (len(index_swap)-1): # last element must cross over with the first 
+                  
+                    index_A = index_swap[j]
+                    index_B = index_swap[0]
+                else:
+                    index_A = index_swap[j]
+                    index_B = index_swap[j+1]
+                
+                crossOverPoint = int(round(random.uniform(1,len(self.nodesChromosomes[0][0]) - 1),0))
+                
+                for k in range(len(self.X[0][0])):
+                    if k >= crossOverPoint:
+                        cloneList[index_A][0][k] = cloneList[index_B][0][k]
+            self.nodesChromosomes = copy.deepcopy(cloneList)
+    
+    def mutation(self):
+        # for each chromosome (excluding the 2 best fit pair) run a randome number generator 
+        # if the number is less than the ratio then randomly select a speed value.
+        # do this for each speed value in a solution X
+        # return the children 
+        clone = copy.deepcopy(self.nodesChromosomes)
+        for i in range(2,self.population):
+            for j in range(len(self.nodesChromosomes[0][0])):
+                check = round(random.uniform(0,1),2) 
+                if check <= self.pm:
+                    # now we need to mutate the node
+                    clone[i][0][j].setLightTimes(self, random_genetic = True)
+        self.nodesChromosomes = copy.deepcopy(clone)
+    
+
+
+    def run(self):
+        self.generateNewSol()
+        bestSolutions = []
+        for i in range(self.generations):
+            self.solveForEachY()
+            bestSolutions.append(self.X[0])
+            self.russianRoulette()
+            self.crossOver()
+            self.mutation()
+        
+        return 
+

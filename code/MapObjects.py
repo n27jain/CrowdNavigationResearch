@@ -2,6 +2,7 @@
 import random
 
 from matplotlib import pyplot as plt
+from scipy import rand
 
 
 class Solution():
@@ -21,6 +22,11 @@ class Map(object):
         self.y_edges = y_edges
         self.nodes = nodes
 
+def findNode(coordinate, nodes):
+    for node in nodes:
+        if node.x == coordinate[0] and node.y == coordinate[1]: 
+            return node
+    return None
         
 def gaussian():
     x = -1
@@ -39,10 +45,7 @@ class Node:
         self.G_T = [0,0,0,0]
         self.Go_T = [0,0,0,0]
         self.Stop_T = [0,0,0,0]
-        self.greenOffset =  random.randint(0,1) # this is for the X intersection. Opposite for the Y intersection
-        if self.greenOffset == 0:
-            self.greenOffset = 1
-        else: self.greenOffset = -1 
+        
 
         # these are edges
         self.east= None
@@ -61,7 +64,7 @@ class Node:
         elif incomingSpeed < 60: return 4.5
         else: return 5
 
-    def setLightTimes(self):
+    def setLightTimes(self, random_genetic = False):
         #0,1 are east west
         #2,3 are south north
         #Assume equal time for opposite directions and 
@@ -118,8 +121,11 @@ class Node:
             self.Go_T[2] = 0
             self.Go_T[3] = 0
             return
-           
-        e_w_percent_green  = e_w_d / (e_w_d + s_n_d)
+        
+        if random_genetic:
+            e_w_percent_green = 0.2 + random.uniform(0,0.6)
+        else:
+            e_w_percent_green  =  e_w_d / (e_w_d + s_n_d)
 
        
         self.G_T[0] = self.cycletime * e_w_percent_green - e_w_y
@@ -145,11 +151,13 @@ class Node:
         if self.north: 
             self.Go_T[3] = self.G_T[3] + self.Y_T[3]
             self.Stop_T[3] = self.R_T[3]
-        
+            
+        self.greenOffset =  random.randint(0,1) # this is for the X intersection. Opposite for the Y intersection
+        if self.greenOffset == 0:
+            self.greenOffset = 1
+        else: self.greenOffset = -1 
         self.greenOffset = -1 * random.randint( 0,int( min( self.Go_T[0], self.Go_T[2] ) ) )
-        
-
-        
+           
     def printSelf(self):
         
         out = "( " + str(self.x) + " " + str(self.y) + " )  |  " + str(self.greenOffset)+ " | " + str(self.Go_T) + " | " + str(self.Stop_T) + " | " + str(self.cycletime)
