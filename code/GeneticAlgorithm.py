@@ -540,7 +540,7 @@ class GeneticAlgorithmnAdaptive:
         bestSolutions = []
         for i in range(self.generations):
             self.solveForEachY()
-            bestSolutions.append(self.X[0])
+            bestSolutions.append(self.nodesChromosomes[0])
             self.russianRoulette()
             self.crossOver()
             self.mutation()
