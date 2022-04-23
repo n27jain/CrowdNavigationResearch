@@ -427,10 +427,10 @@ def practice():
 def experiment_4():
     #same 8x8 map
     paths = []
-    paths.append(setUpPaths("Paths/experiment4/path0",1,3,xmax = 8, ymax = 8)[0])
-    # paths.append(setUpPaths("Paths/experiment4/path1",1,random.randint(6,25),xmax = 8, ymax = 8)[0])
-    # paths.append(setUpPaths("Paths/experiment4/path2",1,random.randint(6,25),xmax = 8, ymax = 8)[0])
-    # paths.append(setUpPaths("Paths/experiment4/path3",1,random.randint(6,25),xmax = 8, ymax = 8)[0])
+    paths.append(setUpPaths("Paths/experiment4/path1",1,random.randint(6,25),xmax = 8, ymax = 8)[0])
+    paths.append(setUpPaths("Paths/experiment4/path1",1,random.randint(6,25),xmax = 8, ymax = 8)[0])
+    paths.append(setUpPaths("Paths/experiment4/path1",1,random.randint(6,25),xmax = 8, ymax = 8)[0])
+    paths.append(setUpPaths("Paths/experiment4/path2",1,random.randint(6,25),xmax = 8, ymax = 8)[0])
     base, bestSol = solveAdaptive(paths)
 
     # solve each path
