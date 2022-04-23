@@ -217,7 +217,20 @@ class Node:
             out += "\n" + "    "
             out = out + " W: " + e
         return out 
-
+    
+    def printNodeExclusive(self):
+        out = "NODE: ( " + str(self.x) + " " + str(self.y) + " )  | \n "
+        out += "    greenOffset : " + str(self.greenOffset)+ " | \n " 
+        out += "    G_E: " + str(self.Go_T[0]) + " | \n" 
+        out += "    G_W: " + str(self.Go_T[1]) + " | \n" 
+        out += "    G_S: " + str(self.Go_T[2]) + " | \n" 
+        out += "    G_N: " + str(self.Go_T[3]) + " | \n" 
+        out += "    S_E: " + str(self.Stop_T[0]) + " | \n" 
+        out += "    S_W: " + str(self.Stop_T[1]) + " | \n" 
+        out += "    S_S: " + str(self.Stop_T[2]) + " | \n" 
+        out += "    S_N: " + str(self.Stop_T[3]) + " | \n" 
+        out += "    C: " + str(self.cycletime) + "\n"
+        return out
 class Edge:
     def __init__(self, node_1, node_2, distance, direction):
         self.node_1 = node_1 # (x,y)

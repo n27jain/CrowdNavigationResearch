@@ -1,0 +1,10 @@
+Base Solution:
+
+Time = 113228.22
+Fuel = 0.930
+
+Best 
+
+Time = 109465.02
+Fuel = 0.862
+

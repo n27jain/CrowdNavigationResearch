@@ -409,27 +409,28 @@ def experiment_3():
 
 
 def practice():
-    paths = getPathsFromSaveData()
-    # paths = setUpPaths("Paths/Practice/", 1 , 20 , xmax = 8 , ymax = 8)
-    population=50
-    generations = 100
-    pc = 0.6
-    pm = 0.4
-    i = 0
-    while i < 5:
-        base, results = solveThisPath(paths[0],population,generations,pc,pm)
-        # print("base: ", base)
-        # print("results :", results[-1])
-        i +=1
+    # paths = getPathsFromSaveData()
+    # # paths = setUpPaths("Paths/Practice/", 1 , 20 , xmax = 8 , ymax = 8)
+    # population=50
+    # generations = 100
+    # pc = 0.6
+    # pm = 0.4
+    # i = 0
+    # while i < 5:
+    #     base, results = solveThisPath(paths[0],population,generations,pc,pm)
+    #     # print("base: ", base)
+    #     # print("results :", results[-1])
+    #     i +=1
+    exportFinalStringToFile("HELLO" , "ResultSummary/experiment4.txt")
     
 #Adaptive Traffic Light System
 def experiment_4():
     #same 8x8 map
     paths = []
     paths.append(setUpPaths("Paths/experiment4/path0",1,random.randint(6,25),xmax = 8, ymax = 8)[0])
-    paths.append(setUpPaths("Paths/experiment4/path1",1,random.randint(6,25),xmax = 8, ymax = 8)[0])
-    paths.append(setUpPaths("Paths/experiment4/path2",1,random.randint(6,25),xmax = 8, ymax = 8)[0])
-    paths.append(setUpPaths("Paths/experiment4/path3",1,random.randint(6,25),xmax = 8, ymax = 8)[0])
+    # paths.append(setUpPaths("Paths/experiment4/path1",1,random.randint(6,25),xmax = 8, ymax = 8)[0])
+    # paths.append(setUpPaths("Paths/experiment4/path2",1,random.randint(6,25),xmax = 8, ymax = 8)[0])
+    # paths.append(setUpPaths("Paths/experiment4/path3",1,random.randint(6,25),xmax = 8, ymax = 8)[0])
     base, bestSol = solveAdaptive(paths)
 
     # solve each path
@@ -437,12 +438,41 @@ def experiment_4():
     # then run GA to each node 
     # 
     outString = "Results: \n"
-    baseString = "BASE SOL: \n" + "Nodes are " + str(base[0]) + "\n" + "Total Time : " + str(base[1]) + "\n" + "Total Fuel : " + str(base[2]) + "\n"
-    solString = "BEST SOL: \n"
-    i = 0
-    for sol in bestSol:
-        solString += "i: " + str(i) + "\n" + "Nodes are " + str(sol[0]) + "\n" + "Total Time : " + str(sol[1]) + "\n" + "Total Fuel : " + str(sol[2]) + "\n"
-        i +=1
+    baseString = "BASE SOL: \n" 
+    + "Nodes are :  \n"
+    for node in base[0]:
+        baseString += node.printNodeExclusive()
+    baseString += ("\n" + "Total Time : " 
+    + str(base[1]) 
+    + "\n" 
+    + "Total Fuel : " 
+    + str(base[2]) 
+    + "\n")
+
+    solString = "BEST LAST 3 SOL: \n"
+    solString += "1: " + "Nodes are :  \n"
+    for node in bestSol[-3][0]:
+        solString += node.printNodeExclusive()
+    solString += ("Total Time : " 
+    + str(bestSol[-3][1]) + "\n" 
+    + "Total Fuel : " 
+    + str(bestSol[-3][2]) + "\n")
+
+    solString += "2: " + "Nodes are :  \n"
+    for node in bestSol[-3][0]:
+        solString += node.printNodeExclusive()
+    solString += ("Total Time : " 
+    + str(bestSol[-2][1]) + "\n" 
+    + "Total Fuel : " 
+    + str(bestSol[-2][2]) + "\n")
+
+    solString += "3: " + "Nodes are :  \n"
+    for node in bestSol[-3][0]:
+        solString += node.printNodeExclusive()
+    solString += ("Total Time : " 
+    + str(bestSol[-1][1]) + "\n" 
+    + "Total Fuel : " 
+    + str(bestSol[-1][2]) + "\n")
     totalString = outString + baseString + solString
     exportFinalStringToFile(totalString , "ResultSummary/experiment4.txt")
     return
@@ -482,8 +512,8 @@ def exportFinalStringToFile(string, title = "ResultSummary/results.txt"):
 def STTP():
     # runCustom(8,8)
     # experiment_1()
-    experiment_4()
-    # practice()
+    #experiment_4()
+    practice()
 
 
 
