@@ -53,8 +53,8 @@ def solveAdaptive(paths):
     gA = GeneticAlgorithmnAdaptive()
     gA.paths = paths
     gA.baseChromosome[0] = nodes
-    gA.run()
-    
+    return gA.run()
+
 
    
     # now for each path we need to update the value based off the nodes list.

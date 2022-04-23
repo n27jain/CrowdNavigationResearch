@@ -1,4 +1,5 @@
 
+from sklearn.metrics import v_measure_score
 from MapObjects import *
 from MapGenerator import *
 from CreatePaths import *
@@ -405,8 +406,21 @@ def experiment_3():
     announcement = "No Variation \n"
     title = announcement + title       
     prepareFile(fname,base,results,title)
-   
-    
+
+
+def practice():
+    paths = getPathsFromSaveData()
+    # paths = setUpPaths("Paths/Practice/", 1 , 20 , xmax = 8 , ymax = 8)
+    population=50
+    generations = 100
+    pc = 0.6
+    pm = 0.4
+    i = 0
+    while i < 5:
+        base, results = solveThisPath(paths[0],population,generations,pc,pm)
+        # print("base: ", base)
+        # print("results :", results[-1])
+        i +=1
     
 #Adaptive Traffic Light System
 def experiment_4():
@@ -416,20 +430,21 @@ def experiment_4():
     paths.append(setUpPaths("Paths/experiment4/path1",1,random.randint(6,25),xmax = 8, ymax = 8)[0])
     paths.append(setUpPaths("Paths/experiment4/path2",1,random.randint(6,25),xmax = 8, ymax = 8)[0])
     paths.append(setUpPaths("Paths/experiment4/path3",1,random.randint(6,25),xmax = 8, ymax = 8)[0])
-    paths.append(setUpPaths("Paths/experiment4/path4",1,random.randint(6,25),xmax = 8, ymax = 8)[0])
-    paths.append(setUpPaths("Paths/experiment4/path5",1,random.randint(6,25),xmax = 8, ymax = 8)[0])
-    paths.append(setUpPaths("Paths/experiment4/path6",1,random.randint(6,25),xmax = 8, ymax = 8)[0])
-    paths.append(setUpPaths("Paths/experiment4/path7",1,random.randint(6,25),xmax = 8, ymax = 8)[0])
-    solveAdaptive(paths)
+    base, bestSol = solveAdaptive(paths)
+
     # solve each path
     # store the nodes of each path 
     # then run GA to each node 
     # 
-    
-
-
-   
-
+    outString = "Results: \n"
+    baseString = "BASE SOL: \n" + "Nodes are " + str(base[0]) + "\n" + "Total Time : " + str(base[1]) + "\n" + "Total Fuel : " + str(base[2]) + "\n"
+    solString = "BEST SOL: \n"
+    i = 0
+    for sol in bestSol:
+        solString += "i: " + str(i) + "\n" + "Nodes are " + str(sol[0]) + "\n" + "Total Time : " + str(sol[1]) + "\n" + "Total Fuel : " + str(sol[2]) + "\n"
+        i +=1
+    totalString = outString + baseString + solString
+    exportFinalStringToFile(totalString , "ResultSummary/experiment4.txt")
     return
 
 
@@ -458,8 +473,9 @@ def convertPathToStringResult(p_number, base, results):
             break
     out = out + " \n " + base + "\n " + " BEST : " + str(results[-1]) + " \n GEN : " + str(genFound) + "\n"
     return out
-def exportFinalStringToFile(string):
-    f = open("ResultSummary/results.txt",'w')
+
+def exportFinalStringToFile(string, title = "ResultSummary/results.txt"):
+    f = open(title,'w')
     f.write(string)
 
 
@@ -467,6 +483,7 @@ def STTP():
     # runCustom(8,8)
     # experiment_1()
     experiment_4()
+    # practice()
 
 
 

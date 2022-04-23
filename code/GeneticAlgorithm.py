@@ -7,7 +7,7 @@ from turtle import getscreen
 
 from MapObjects import *
 
-
+import timeit
 
 class GeneticAlgorithm:
     def __init__(self,population=50,generations = 150, pc = 0.6, pm =0.4):
@@ -45,9 +45,13 @@ class GeneticAlgorithm:
         self.worst = None
 
         self.totalFitness = 0
-        self.path = None
+        self.path = None 
 
+        self.listOfPastPathSolutions = {"key": [0,0]}
+         #  "[x,x,x,x,]" , [time, fuel]
 
+    def findPastSolIfExists(self, x):
+         return self.listOfPastPathSolutions.get(str(x))
     
     def setVars(self, N , D , S , C , G_T , R_T , G_Offset, motion, path ):
         self.N = N
@@ -67,6 +71,7 @@ class GeneticAlgorithm:
     def f(self, x):
         # this is the function
 
+    
         t_total = 0
         f_total = 0
 
@@ -81,7 +86,7 @@ class GeneticAlgorithm:
             wait_time  = self.R_T[0] - self.G_Offset[0] + penalty
             f_total += self.getFuel(wait_time)
             t_total += wait_time
-       # else
+    # else
         # otherwise proceed to the algorithmn as usual
         for i in range(0, len(self.D) ):
             if x[i] == 0: 
@@ -158,15 +163,19 @@ class GeneticAlgorithm:
             else: # this is the last edge to travel. No need to check anything just 
                 t_total += t_t
         return t_total, f_total
-    
+       
     def solveForEachX(self):
-
         self.baseX[1], self.baseX[2] = self.f(self.baseX[0])
-        for x in self.X:
-            x[1], x[2] = self.f(x[0])
-
         self.baseX[3] = self.getScore(self.baseX[1], self.baseX[2])
-
+        for x in self.X:
+            # check = self.findPastSolIfExists(x)
+            # if check == None:
+            #     x[1], x[2] = self.f(x[0])
+            #     self.listOfPastPathSolutions.update( {str(x[0]): [x[1], x[2]]})
+            # else:
+            #     x[1] = check[0]
+            #     x[2] = check[1]
+            x[1], x[2] = self.f(x[0])
         for x in self.X:
             x[3] = self.getScore(x[1],x[2])
 
@@ -190,7 +199,6 @@ class GeneticAlgorithm:
                 if i == 0:
                     x.append(round(self.S[j], 0))
                 else:
-                    # print("S: ", self.S[j] )
                     if self.S[j] > 30:
                         x.append( random.randint(30, round(self.S[j], 0) ) )
                     elif self.S[j] <= 0: # there was an error in this path. go at a steady 0.1 km/h
@@ -316,7 +324,6 @@ class GeneticAlgorithm:
     def run(self):
         self.generateNewSol() #create 50 random solutions to begin with
         bestSolutions = []
-        
         for i in range(self.generations):
             self.solveForEachX()
             bestSolutions.append(self.X[0])
@@ -331,7 +338,7 @@ class GeneticAlgorithm:
 
 
 class GeneticAlgorithmnAdaptive:
-    def __init__(self,population=50,generations = 150, pc = 0.6, pm =0.4):
+    def __init__(self,population=50,generations = 50, pc = 0.6, pm =0.4):
         self.population = population
         self.generations = generations
         self.pc = pc
@@ -349,10 +356,8 @@ class GeneticAlgorithmnAdaptive:
         self.paths = [] # a list of <path>
         self.bestPathsSol = [] # generation #, solution
 
-    
-
-
-
+        #self.listOfPastPathSolutions = {"key": [0,0]} # key string value deterived from converting a solution array to a string i.e str([n1,n2,n3,..ni])
+        # Array value is total time and total fuel .
 
     def f(self, chromosome):
         # provided the chromosome for the nodes
@@ -361,6 +366,8 @@ class GeneticAlgorithmnAdaptive:
         # store the best solutions for each path
         # sum up their results 
         # return
+
+
         total_time = 0
         total_fuel = 0
         q = 0
@@ -390,7 +397,7 @@ class GeneticAlgorithmnAdaptive:
                     offset *= -1 # reverse the offset value because we are waiting for N or S light
                 G_Offset.append(offset)
 
-            gA = GeneticAlgorithm()
+            gA = GeneticAlgorithm(generations=50) # reduce the computational time by a factor of 1/3
             gA.setVars(N ,D ,S , C, G_T ,R_T , G_Offset, motion, path)
             basePath , bestSol = gA.run()
             time =  bestSol[-1][1]
@@ -399,7 +406,6 @@ class GeneticAlgorithmnAdaptive:
             total_fuel += (fuel* self.numberTravellersArray[q])
             q += 1
         return total_time, total_fuel
-
        
     def generateNewSol(self):
         # call setLightTimes(random_genetic = True) for each node in the node list
@@ -514,7 +520,7 @@ class GeneticAlgorithmnAdaptive:
                 
                 crossOverPoint = int(round(random.uniform(1,len(self.nodesChromosomes[0][0]) - 1),0))
                 
-                for k in range(len(self.X[0][0])):
+                for k in range(len(self.nodesChromosomes[0][0])):
                     if k >= crossOverPoint:
                         cloneList[index_A][0][k] = cloneList[index_B][0][k]
             self.nodesChromosomes = copy.deepcopy(cloneList)
@@ -530,20 +536,29 @@ class GeneticAlgorithmnAdaptive:
                 check = round(random.uniform(0,1),2) 
                 if check <= self.pm:
                     # now we need to mutate the node
-                    clone[i][0][j].setLightTimes(self, random_genetic = True)
+                    clone[i][0][j].setLightTimes(random_genetic = True)
         self.nodesChromosomes = copy.deepcopy(clone)
     
 
 
     def run(self):
+        start = timeit.default_timer()
         self.generateNewSol()
         bestSolutions = []
+        printedBool = False
         for i in range(self.generations):
+            startRun = timeit.default_timer()
+            if(i >= (self.generations // 2) and printedBool == False ):
+                printedBool = True
+                print("We are halfway there!")
+
             self.solveForEachY()
             bestSolutions.append(self.nodesChromosomes[0])
             self.russianRoulette()
             self.crossOver()
             self.mutation()
-        
-        return 
+            print("Run Complete: ", timeit.default_timer() - startRun)
+        stop = timeit.default_timer()
+        print("Adaptive GA SIM TIME: ", stop-start)
+        return self.baseChromosome , bestSolutions
 

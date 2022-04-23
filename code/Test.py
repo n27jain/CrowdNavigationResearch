@@ -1,12 +1,16 @@
+print("Hello world")
 
 
-ar = []
-
-from MapObjects import *
-
-from random import choice
-
-f = open("test/output.txt",'w')
-f.write("____________________fuck:______________________")
-
-
+thisList= {
+    str([0,2,3,4,0]):[1,2,3,4],
+    str([7,2,3,4,7]):12,
+    str([6,2,3,4,6]):123,
+    str([5,2,3,4,5]):1234,
+    str([4,2,3,4,4]):12345,
+    str([3,2,3,4,3]):123456,
+    str([1,2,3,4,5]):1234567,
+    str([1,2,3,4,5]):12345678,
+    str([1,2,3,4,5]):123456789,
+    str([1,2,3,4,5]):1234567890
+}
+print( thisList.get( str([0] ) ) )
