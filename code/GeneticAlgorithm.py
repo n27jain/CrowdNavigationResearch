@@ -436,12 +436,11 @@ class GeneticAlgorithmnAdaptive:
 
     def convertToFitness(self):
         tF = 0 # total fitness
-        total = 0
         for chrome in self.nodesChromosomes:
             tF += chrome[3]
-        for chrome in self.nodesChromosomes:
-            chrome[4] = chrome[3]/ tF
-            total += chrome[4]
+        if (tF != 0):
+            for chrome in self.nodesChromosomes:
+                chrome[4] = chrome[3]/ tF
         self.nodesChromosomes = sorted(self.nodesChromosomes, key=lambda sol: (sol[4]) , reverse=True )
 
     
