@@ -427,10 +427,10 @@ def practice():
 def experiment_4():
     #same 8x8 map
     paths = []
-    paths.append(setUpPaths("Paths/experiment4/path1",1,random.randint(6,25),xmax = 8, ymax = 8)[0])
-    paths.append(setUpPaths("Paths/experiment4/path1",1,random.randint(6,25),xmax = 8, ymax = 8)[0])
+    paths.append(setUpPaths("Paths/experiment4/path0",1,random.randint(6,25),xmax = 8, ymax = 8)[0])
     paths.append(setUpPaths("Paths/experiment4/path1",1,random.randint(6,25),xmax = 8, ymax = 8)[0])
     paths.append(setUpPaths("Paths/experiment4/path2",1,random.randint(6,25),xmax = 8, ymax = 8)[0])
+    paths.append(setUpPaths("Paths/experiment4/path3",1,random.randint(6,25),xmax = 8, ymax = 8)[0])
     base, bestSol = solveAdaptive(paths)
 
     # solve each path
@@ -539,7 +539,7 @@ def exportFinalStringToFile(string, title = "ResultSummary/results.txt"):
 def STTP():
     # runCustom(8,8)
     # experiment_1()
-    experiment_5()
+    experiment_4()
     # practice()
 
 
