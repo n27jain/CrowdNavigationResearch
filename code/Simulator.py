@@ -462,6 +462,48 @@ def experiment_4():
     exportFinalStringToFile(totalString , "ResultSummary/experiment4.txt")
     return
 
+def experiment_5():
+     #same 8x8 map
+    paths = []
+    paths.append(setUpPaths("Paths/experiment4/path1",1,random.randint(6,25),xmax = 8, ymax = 8)[0])
+    paths.append(setUpPaths("Paths/experiment4/path1",1,random.randint(6,25),xmax = 8, ymax = 8)[0])
+    paths.append(setUpPaths("Paths/experiment4/path1",1,random.randint(6,25),xmax = 8, ymax = 8)[0])
+    paths.append(setUpPaths("Paths/experiment4/path2",1,random.randint(6,25),xmax = 8, ymax = 8)[0])
+    paths.append(setUpPaths("Paths/experiment4/path1",1,random.randint(6,25),xmax = 8, ymax = 8)[0])
+    paths.append(setUpPaths("Paths/experiment4/path1",1,random.randint(6,25),xmax = 8, ymax = 8)[0])
+    paths.append(setUpPaths("Paths/experiment4/path2",1,random.randint(6,25),xmax = 8, ymax = 8)[0])
+    paths.append(setUpPaths("Paths/experiment4/path1",1,random.randint(6,25),xmax = 8, ymax = 8)[0])
+    base, bestSol = solveAdaptive(paths)
+
+    # solve each path
+    # store the nodes of each path 
+    # then run GA to each node 
+    # 
+    outString = "Results: \n"
+    baseString = "BASE SOL: \n"  + "Nodes are :  \n"
+    for node in base[0]:
+        baseString += node.printNodeExclusive()
+    baseString += ("\n" + "Total Time : " + str(base[1]) + "\n" + "Total Fuel : " + str(base[2]) + "\n")
+
+    solString = "BEST LAST 3 SOL: \n"
+    solString += "1: " + "Nodes are :  \n"
+    for node in bestSol[-3][0]:
+        solString += node.printNodeExclusive()
+    solString += ("Total Time : "  + str(bestSol[-3][1]) + "\n" + "Total Fuel : " + str(bestSol[-3][2]) + "\n")
+
+    solString += "2: " + "Nodes are :  \n"
+    for node in bestSol[-3][0]:
+        solString += node.printNodeExclusive()
+    solString += ("Total Time : " + str(bestSol[-2][1]) + "\n" + "Total Fuel : " + str(bestSol[-2][2]) + "\n")
+
+    solString += "3: " + "Nodes are :  \n"
+    for node in bestSol[-3][0]:
+        solString += node.printNodeExclusive()
+    solString += ("Total Time : " + str(bestSol[-1][1]) + "\n" + "Total Fuel : " + str(bestSol[-1][2]) + "\n")
+    totalString = outString + baseString + solString
+    exportFinalStringToFile(totalString , "ResultSummary/experiment4.txt")
+    return
+
 
 def prepareFile(f_name, base, results, title  ):
     f = open(f_name,'w')
@@ -497,7 +539,7 @@ def exportFinalStringToFile(string, title = "ResultSummary/results.txt"):
 def STTP():
     # runCustom(8,8)
     # experiment_1()
-    experiment_4()
+    experiment_5()
     # practice()
 
 

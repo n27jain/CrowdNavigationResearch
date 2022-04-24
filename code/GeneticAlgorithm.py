@@ -346,7 +346,7 @@ class GeneticAlgorithmnAdaptive:
         self.wage = 30.69
         self.wageValueFactor = 0.5
         self.fuelCost = 1.809 # dollars per liter
-        self.numberTravellersArray = [10,5,5,1,1,1,1,1,]
+        self.numberTravellersArray = [10,5,5,1,1,1,1,1]
         
         self.nodesChromosomes = [] # <list> of nodes, scoresum of paths, scoresum of path's fuel consumption
         
